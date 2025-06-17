@@ -1,0 +1,69 @@
+plugins {
+    id("java-base")
+    id("application")
+    id("org.springframework.boot") version "${springBootVersion}"
+    id("jacoco")
+    id("org.sonarqube") version "${sonarqubePluginVersion}"
+}
+
+wrapper {
+    gradleVersion = gradlewVersion
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    group = 'com.mjc.school'
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: "${springBootVersion}"
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: "${springBootVersion}"
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: "${springBootVersion}"
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: "${springBootVersion}"
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: "${springBootVersion}"
+
+        implementation group: 'org.apache.logging.log4j', name: 'log4j-layout-template-json', version: "${log4jVersion}"
+        compileOnly group: 'org.sonarsource.sonarqube', name: 'sonar-plugin-api', version: "${sonarqubeVersion}"
+
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springBootVersion}"
+
+    }
+    configurations {
+        configureEach {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+    }
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "${jacocoVersion}"
+}
+
+sonar {
+    properties {
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.token", System.getenv("SONAR_TOKEN")
+    }
+}
+
+springBoot {
+    mainClass = 'com.mjc.school.Main'
+}

@@ -1,0 +1,25 @@
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}"
+}
+
+dependencies {
+    implementation project(':module-service')
+
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springBootVersion}"
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${springBootVersion}"
+
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: "${springdocOpenapiVersion}"
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonDatabindVersion}"
+
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: "${restassuredVersion}"
+    testImplementation group: 'io.rest-assured', name: 'json-path', version: "${jsonPathVersion}"
+    testImplementation group: 'com.h2database', name: 'h2', version: "${h2Version}"
+}
+
+bootJar {
+    archiveBaseName = 'application'
+    version = 'latest'
+    mainClass = 'com.mjc.school.Main'
+}
+

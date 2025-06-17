@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':module-repository')
+
+    implementation group: 'org.springframework', name: 'spring-aspects', version: "${springVersion}"
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: "${mapstructVersion}"
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: "${mapstructVersion}"
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: "${jjwtVersion}"
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: "${jjwtVersion}"
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: "${jjwtVersion}"
+    implementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: "${jupiterVersion}"
+}
