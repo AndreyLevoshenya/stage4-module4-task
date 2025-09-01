@@ -1,0 +1,122 @@
+.news-details-container {
+    max-width: 800px;
+    margin: 80px auto 60px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.news-details-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.news-details-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 1.5rem;
+}
+
+.news-details-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.news-details-tag {
+    background: #f1f3f4;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    color: #555;
+}
+
+.news-details-comments {
+    margin-top: 2rem;
+}
+
+.news-details-comments h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Добавление комментария */
+.add-comment {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.add-comment textarea {
+    resize: none;
+    min-height: 60px;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+}
+
+.add-comment button {
+    align-self: flex-end;
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #0b2239;
+    color: white;
+    cursor: pointer;
+}
+
+.add-comment button:hover {
+    background: #124066;
+}
+
+.comment {
+    padding: 0.8rem 1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    border: 1px solid #eee;
+}
+
+.comment-text {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 0.3rem;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-top: 0.2rem;
+    border-top: 1px solid #eee;
+    padding-top: 0.3rem;
+}
+
+.news-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.news-detail-actions button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.news-detail-actions .edit-btn:hover {
+    color: #007bff;
+}
+
+.news-detail-actions .delete-btn:hover {
+    color: red;
+}

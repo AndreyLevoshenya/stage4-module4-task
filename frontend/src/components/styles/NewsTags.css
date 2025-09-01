@@ -1,0 +1,13 @@
+.news-tags {
+    margin-bottom: 0.5rem;
+}
+
+.news-tags span {
+    display: inline-block;
+    background-color: #e0ebff;
+    color: #3b63ff;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    margin-right: 0.25rem;
+}
