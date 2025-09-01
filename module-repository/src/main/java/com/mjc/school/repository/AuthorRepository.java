@@ -37,4 +37,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long>, JpaSpecif
 
     @Query("SELECT a FROM Author a INNER JOIN a.news n WHERE n.id = :newsId")
     Optional<Author> readByNewsId(@Param("newsId") Long newsId);
+
+    @Query("SELECT a FROM Author a INNER JOIN a.user n WHERE n.username = :username")
+    Optional<Author> readByUserUsername(@Param("username") String username);
 }

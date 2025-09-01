@@ -21,13 +21,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.mjc.school.exception.ExceptionErrorCodes.AUTHOR_DOES_NOT_EXIST;
-import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
+import java.util.List;
+
+import static com.mjc.school.exception.ExceptionErrorCodes.*;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class AuthorServiceImpl implements AuthorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorServiceImpl.class);
+    private static final List<String> fieldsToSearch = List.of("name");
 
     private final AuthorRepository authorRepository;
 
@@ -42,12 +44,13 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional(readOnly = true)
     public Page<AuthorDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
-        LOGGER.info("Reading all authors for {}", searchingRequest);
         if (searchingRequest == null) {
+            LOGGER.info("Reading all authors");
             return authorRepository.findAll(pageable).map(authorDtoMapper::modelToDto);
         }
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<Author> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        LOGGER.info("Reading all authors for {}", searchingRequest.getValue());
+
+        Specification<Author> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
         return authorRepository.findAll(specification, pageable).map(authorDtoMapper::modelToDto);
     }
 
@@ -126,6 +129,18 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = authorRepository.readByNewsId(newsId).orElseThrow(() -> {
             LOGGER.warn("News with id {} not found", newsId);
             return new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
+        });
+        return authorDtoMapper.modelToDto(author);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AuthorDtoResponse readByUserUsername(String username) {
+        LOGGER.info("Reading author by user username {}", username);
+
+        Author author = authorRepository.readByUserUsername(username).orElseThrow(() -> {
+            LOGGER.warn("Author with user username {} not found", username);
+            return new NotFoundException(String.format(USER_DOES_NOT_EXIST.getErrorMessage(), username));
         });
         return authorDtoMapper.modelToDto(author);
     }

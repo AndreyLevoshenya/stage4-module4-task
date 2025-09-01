@@ -1,23 +1,20 @@
 package com.mjc.school.dto;
 
-import com.mjc.school.annotation.Search;
-
 public class SearchingRequest {
-    @Search
-    private String fieldNameAndValue;
+    private String value;
 
     public SearchingRequest() {
     }
 
-    public SearchingRequest(String fieldNameAndValue) {
-        this.fieldNameAndValue = fieldNameAndValue;
+    public SearchingRequest(String value) {
+        this.value = value;
     }
 
-    public String getFieldNameAndValue() {
-        return fieldNameAndValue;
+    public String getValue() {
+        return value;
     }
 
-    public void setFieldNameAndValue(String fieldNameAndValue) {
-        this.fieldNameAndValue = fieldNameAndValue;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

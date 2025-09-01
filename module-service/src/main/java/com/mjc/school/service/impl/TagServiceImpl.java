@@ -22,6 +22,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
 import static com.mjc.school.exception.ExceptionErrorCodes.TAG_DOES_NOT_EXIST;
 
@@ -29,6 +31,7 @@ import static com.mjc.school.exception.ExceptionErrorCodes.TAG_DOES_NOT_EXIST;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
+    private static final List<String> fieldsToSearch = List.of("name");
 
     private final TagRepository tagRepository;
     private final NewsRepository newsRepository;
@@ -45,12 +48,12 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true)
     public Page<TagDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
-        LOGGER.info("Reading all the tags for {}", searchingRequest);
         if (searchingRequest == null) {
+            LOGGER.info("Reading all tags");
             return tagRepository.findAll(pageable).map(tagDtoMapper::modelToDto);
         }
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<Tag> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        LOGGER.info("Reading all the tags for {}", searchingRequest.getValue());
+        Specification<Tag> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
         return tagRepository.findAll(specification, pageable).map(tagDtoMapper::modelToDto);
     }
 

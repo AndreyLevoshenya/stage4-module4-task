@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.mjc.school.exception.ExceptionErrorCodes.*;
 
@@ -36,6 +37,7 @@ import static com.mjc.school.exception.ExceptionErrorCodes.*;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class NewsServiceImpl implements NewsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NewsServiceImpl.class);
+    private static final List<String> fieldsToSearch = List.of("title", "content");
 
     private final NewsRepository newsRepository;
     private final AuthorRepository authorRepository;
@@ -53,12 +55,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional(readOnly = true)
     public Page<NewsDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
-        LOGGER.info("Reading all the news for {}", searchingRequest);
         if (searchingRequest == null) {
+            LOGGER.info("Reading all the news");
             return newsRepository.findAll(pageable).map(newsDtoMapper::modelToDto);
         }
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<News> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        LOGGER.info("Reading all the news for {}", searchingRequest.getValue());
+        Specification<News> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
         return newsRepository.findAll(specification, pageable).map(newsDtoMapper::modelToDto);
     }
 
@@ -160,7 +162,7 @@ public class NewsServiceImpl implements NewsService {
                                 LOGGER.error("Tag with id {} not found. Unable to patch news", tagId);
                                 return new NotFoundException(String.format(TAG_DOES_NOT_EXIST.getErrorMessage(), tagId));
                             }))
-                    .toList();
+                    .collect(Collectors.toList());
             prevNews.setTags(tags);
         }
 

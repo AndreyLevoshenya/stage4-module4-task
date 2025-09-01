@@ -55,12 +55,11 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-            @RequestParam(name = "searchBy", required = false) String searchBy,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "search", required = false) String search,
             @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
         SearchingRequest searchingRequest = null;
-        if (searchBy != null && !searchBy.isBlank() && searchValue != null && !searchValue.isBlank()) {
-            searchingRequest = new SearchingRequest(searchBy + ":" + searchValue);
+        if (search != null && !search.isBlank()) {
+            searchingRequest = new SearchingRequest(search);
         }
         Page<AuthorDtoResponse> pageDtoResponse = authorService.readAll(searchingRequest, pageable);
         for (AuthorDtoResponse authorDtoResponse : pageDtoResponse.stream().toList()) {

@@ -63,9 +63,8 @@ class TagServiceImplTest {
     @Test
     void readAll_shouldReturnFilteredTags_whenSearchingRequestIsProvided() {
         Pageable pageable = PageRequest.of(0, 10);
-        SearchingRequest searchingRequest = new SearchingRequest("name:Name");
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<Tag> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        SearchingRequest searchingRequest = new SearchingRequest("Name");
+        Specification<Tag> specification = EntitySpecification.searchByFields(List.of("name"), searchingRequest.getValue());
 
         List<Tag> tags = List.of(new Tag(), new Tag());
         Page<Tag> tagPage = new PageImpl<>(tags, pageable, tags.size());

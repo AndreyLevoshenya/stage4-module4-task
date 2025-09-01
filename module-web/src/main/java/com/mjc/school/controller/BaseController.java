@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface BaseController<T, R, K> {
 
-    ResponseEntity<Page<R>> readAll(String searchBy, String searchValue, Pageable pageable);
+    ResponseEntity<Page<R>> readAll(String search, Pageable pageable);
 
     ResponseEntity<R> readById(K id);
 

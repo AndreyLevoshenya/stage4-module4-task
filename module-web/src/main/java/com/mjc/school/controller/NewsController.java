@@ -1,16 +1,11 @@
 package com.mjc.school.controller;
 
+import com.mjc.school.auth.UserDetailsServiceImpl;
+import com.mjc.school.dto.*;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.CommentService;
 import com.mjc.school.service.NewsService;
 import com.mjc.school.service.TagService;
-import com.mjc.school.dto.AuthorDtoResponse;
-import com.mjc.school.dto.CommentDtoResponse;
-import com.mjc.school.dto.NewsDtoRequest;
-import com.mjc.school.dto.NewsDtoResponse;
-import com.mjc.school.dto.ParametersDtoRequest;
-import com.mjc.school.dto.SearchingRequest;
-import com.mjc.school.dto.TagDtoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,6 +17,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import static com.mjc.school.controller.RestConstants.NEWS_V1_API_PATH;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -47,13 +46,15 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
     private final AuthorService authorService;
     private final TagService tagService;
     private final CommentService commentService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
-    public NewsController(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService) {
+    public NewsController(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.newsService = newsService;
         this.authorService = authorService;
         this.tagService = tagService;
         this.commentService = commentService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     private static void setLinks(NewsDtoResponse newsDtoResponse) {
@@ -79,12 +80,11 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<NewsDtoResponse>> readAll(
-            @RequestParam(name = "searchBy", required = false) String searchBy,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "search", required = false) String search,
             @PageableDefault(sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
         SearchingRequest searchingRequest = null;
-        if (searchBy != null && !searchBy.isBlank() && searchValue != null && !searchValue.isBlank()) {
-            searchingRequest = new SearchingRequest(searchBy + ":" + searchValue);
+        if (search != null && !search.isBlank()) {
+            searchingRequest = new SearchingRequest(search);
         }
         Page<NewsDtoResponse> page = newsService.readAll(searchingRequest, pageable);
         for (NewsDtoResponse newsDtoResponse : page.stream().toList()) {
@@ -122,6 +122,14 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
     @ResponseStatus(CREATED)
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<NewsDtoResponse> create(@RequestBody NewsDtoRequest createRequest) {
+        if (createRequest.getAuthorId() == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            UserDetails user = userDetailsServiceImpl.loadUserByUsername(username);
+            System.out.println(user.getUsername());
+            Long authorId = authorService.readByUserUsername(user.getUsername()).getId();
+            createRequest.setAuthorId(authorId);
+        }
         NewsDtoResponse newsDtoResponse = newsService.create(createRequest);
         setLinks(newsDtoResponse);
         return new ResponseEntity<>(newsDtoResponse, CREATED);

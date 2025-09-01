@@ -74,9 +74,8 @@ class CommentServiceImplTest {
     @Test
     void readAll_shouldReturnFilteredComments_whenSearchingRequestIsProvided() {
         Pageable pageable = PageRequest.of(0, 10);
-        SearchingRequest searchingRequest = new SearchingRequest("content:John");
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<Comment> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        SearchingRequest searchingRequest = new SearchingRequest("John");
+        Specification<Comment> specification = EntitySpecification.searchByFields(List.of("content"), searchingRequest.getValue());
 
         List<Comment> comments = List.of(new Comment(), new Comment());
         Page<Comment> commentPage = new PageImpl<>(comments, pageable, comments.size());

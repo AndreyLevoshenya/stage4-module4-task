@@ -23,6 +23,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.mjc.school.exception.ExceptionErrorCodes.COMMENT_DOES_NOT_EXIST;
 import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
 
@@ -30,6 +32,7 @@ import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CommentServiceImpl implements CommentService {
     private final static Logger LOGGER = LoggerFactory.getLogger(CommentServiceImpl.class);
+    private static final List<String> fieldsToSearch = List.of("content");
 
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
@@ -48,12 +51,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Page<CommentDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
-        LOGGER.info("Reading all the comments for {}", searchingRequest);
         if (searchingRequest == null) {
+            LOGGER.info("Reading all the comments");
             return commentRepository.findAll(pageable).map(comment -> commentDtoMapper.modelToDto(comment, newsDtoMapper));
         }
-        String[] specs = searchingRequest.getFieldNameAndValue().split(":");
-        Specification<Comment> specification = EntitySpecification.searchByField(specs[0], specs[1]);
+        LOGGER.info("Reading all the comments for {}", searchingRequest.getValue());
+        Specification<Comment> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
         return commentRepository.findAll(specification, pageable).map(comment -> commentDtoMapper.modelToDto(comment, newsDtoMapper));
     }
 

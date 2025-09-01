@@ -69,12 +69,11 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<CommentDtoResponse>> readAll(
-            @RequestParam(name = "searchBy", required = false) String searchBy,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "search", required = false) String search,
             @PageableDefault(sort = "content", direction = Sort.Direction.DESC) Pageable pageable) {
         SearchingRequest searchingRequest = null;
-        if (searchBy != null && !searchBy.isBlank() && searchValue != null && !searchValue.isBlank()) {
-            searchingRequest = new SearchingRequest(searchBy + ":" + searchValue);
+        if (search != null && !search.isBlank()) {
+            searchingRequest = new SearchingRequest(search);
         }
         Page<CommentDtoResponse> pageDtoResponse = commentService.readAll(searchingRequest, pageable);
         for (CommentDtoResponse commentDtoResponse : pageDtoResponse.stream().toList()) {

@@ -55,12 +55,11 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<TagDtoResponse>> readAll(
-            @RequestParam(name = "searchBy", required = false) String searchBy,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "search", required = false) String search,
             @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
         SearchingRequest searchingRequest = null;
-        if (searchBy != null && !searchBy.isBlank() && searchValue != null && !searchValue.isBlank()) {
-            searchingRequest = new SearchingRequest(searchBy + ":" + searchValue);
+        if (search != null && !search.isBlank()) {
+            searchingRequest = new SearchingRequest(search);
         }
         Page<TagDtoResponse> pageDtoResponse = tagService.readAll(searchingRequest, pageable);
         for (TagDtoResponse tagDtoResponse : pageDtoResponse.stream().toList()) {

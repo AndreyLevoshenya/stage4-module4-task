@@ -4,8 +4,10 @@ import com.mjc.school.dto.AuthenticationRequest;
 import com.mjc.school.dto.AuthenticationResponse;
 import com.mjc.school.dto.RegisterRequest;
 import com.mjc.school.exception.NotFoundException;
+import com.mjc.school.model.Author;
 import com.mjc.school.model.Role;
 import com.mjc.school.model.User;
+import com.mjc.school.repository.AuthorRepository;
 import com.mjc.school.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -26,13 +28,15 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager, AuthorRepository authorRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.authorRepository = authorRepository;
     }
 
     @Transactional
@@ -45,7 +49,15 @@ public class AuthenticationService {
                 request.getUsername(),
                 passwordEncoder.encode(request.getPassword()),
                 Role.USER);
+        LOGGER.info("Creating user with username {}", user.getUsername());
         userRepository.save(user);
+
+        var author = new Author();
+        author.setName(request.getUsername());
+        author.setUser(user);
+        LOGGER.info("Saving author with name {}", author.getName());
+        authorRepository.save(author);
+
         var jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken);
     }

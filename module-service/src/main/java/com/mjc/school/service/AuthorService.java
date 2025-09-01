@@ -5,4 +5,5 @@ import com.mjc.school.dto.AuthorDtoResponse;
 
 public interface AuthorService extends BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> {
     AuthorDtoResponse readByNewsId(Long newsId);
+    AuthorDtoResponse readByUserUsername(String username);
 }
