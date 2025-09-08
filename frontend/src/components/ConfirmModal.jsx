@@ -1,7 +1,16 @@
 import React, { useEffect, useCallback } from "react";
-import "./styles/DeleteNewsModal.css";
+import "./styles/ConfirmModal.css";
 
-function DeleteNewsModal({ isOpen, onClose, onDelete, newsTitle }) {
+function ConfirmModal({
+    isOpen,
+    onClose,
+    onConfirm,
+    title = "Confirm action",
+    message = "Are you sure you want to proceed?",
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+    confirmVariant = "danger" // "danger" | "primary"
+}) {
     const handleKeyDown = useCallback((e) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);
@@ -18,21 +27,19 @@ function DeleteNewsModal({ isOpen, onClose, onDelete, newsTitle }) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h3>Delete News</h3>
-                <p>
-                    Are you sure you want to delete the news: <strong>{newsTitle}</strong>?
-                </p>
+                <h3>{title}</h3>
+                <p>{message}</p>
 
                 <div className="modal-actions">
-                    <button type="button" onClick={onClose}>
-                        Cancel
+                    <button type="button" onClick={onClose} className="btn btn-ghost">
+                        {cancelText}
                     </button>
                     <button
                         type="button"
-                        onClick={onDelete}
-                        className="delete-btn"
+                        onClick={onConfirm}
+                        className={`btn ${confirmVariant === "danger" ? "btn-danger" : "btn-primary"}`}
                     >
-                        Delete
+                        {confirmText}
                     </button>
                 </div>
             </div>
@@ -40,4 +47,6 @@ function DeleteNewsModal({ isOpen, onClose, onDelete, newsTitle }) {
     );
 }
 
-export default DeleteNewsModal;
+export default ConfirmModal;
+
+

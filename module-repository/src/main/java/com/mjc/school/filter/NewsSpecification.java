@@ -2,9 +2,7 @@ package com.mjc.school.filter;
 
 import com.mjc.school.model.News;
 import com.mjc.school.model.Tag;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -20,14 +18,18 @@ public class NewsSpecification {
             return (root, query, cb) -> cb.conjunction();
 
         return (root, query, cb) -> {
-            query.distinct(true);
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<News> subRoot = subquery.from(News.class);
+            Join<News, Tag> subTags = subRoot.join("tags", JoinType.INNER);
 
-            Join<News, Tag> tags = root.join("tags", JoinType.INNER);
-            CriteriaBuilder.In<String> inClause = cb.in(tags.get("name"));
-            tagNames.forEach(inClause::value);
+            subquery.select(subRoot.get("id"))
+                    .where(subTags.get("name").in(tagNames))
+                    .groupBy(subRoot.get("id"))
+                    .having(cb.equal(cb.countDistinct(subTags.get("name")), tagNames.size()));
 
-            return inClause;
+            return cb.in(root.get("id")).value(subquery);
         };
     }
+
 }
 

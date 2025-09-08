@@ -37,10 +37,3 @@ footer {
     justify-content: center;
     z-index: 1000;
 }
-
-.main-content {
-    margin-top: 60px;
-    margin-bottom: 50px;
-    min-height: calc(100vh - 110px);
-    padding: 1rem;
-}

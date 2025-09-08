@@ -1,0 +1,29 @@
+/* Using global modal styles from styles/global.css */
+
+.confirm-danger-btn {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.confirm-danger-btn:hover {
+    background: #b91c1c;
+}
+
+.confirm-primary-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.confirm-primary-btn:hover {
+    background: #1d4ed8;
+}
+
+

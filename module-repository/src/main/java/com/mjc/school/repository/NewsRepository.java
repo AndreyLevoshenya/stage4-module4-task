@@ -18,22 +18,22 @@ import java.util.Optional;
 public interface NewsRepository extends JpaRepository<News, Long>, JpaSpecificationExecutor<News> {
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"news", "comments"})
+    @EntityGraph(attributePaths = {"news"})
     List<News> findAll();
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"author", "comments"})
+    @EntityGraph(attributePaths = {"author"})
     Page<News> findAll(@NonNull Pageable pageable);
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"author", "comments"})
+    @EntityGraph(attributePaths = {"author"})
     Page<News> findAll(Specification<News> spec, @NonNull Pageable pageable);
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"author", "comments"})
+    @EntityGraph(attributePaths = {"author"})
     Optional<News> findById(@NonNull Long id);
 
     @EntityGraph(attributePaths = {"author", "tags"})

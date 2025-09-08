@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams, useNavigate, useLocation} from "react-router-dom";
 import './styles/NewsDetailPage.css';
 import NewsTags from "../components/NewsTags";
 import NewsActionsPanel from "../components/NewsActionsPanel";
 import {useSelector} from "react-redux";
+import { api } from "../services/api";
+import NotFoundPage from "./NotFoundPage";
 
 function NewsDetailPage() {
     const {id} = useParams();
@@ -13,33 +15,34 @@ function NewsDetailPage() {
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const [notFound, setNotFound] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const roles = useSelector((state) => state.auth.roles || []);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        fetch(`http://localhost:8080/api/v1/news/${id}`, {
-            headers: {"Authorization": `Bearer ${token}`},
-        })
-            .then((res) => res.json())
+        api.get(`http://localhost:8080/api/v1/news/${id}`)
             .then((data) => {
                 setNews(data);
                 setLoading(false);
             })
-            .catch((err) => console.error("Unable to load news:", err));
-    }, [id]);
+            .catch((err) => {
+                if (err.status === 404) {
+                    setNotFound(true);
+                    setLoading(false);
+                    return;
+                }
+                setError(err.message);
+                setLoading(false);
+            });
+    }, [id, navigate, location.pathname]);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const response = await fetch(`http://localhost:8080/api/v1/news/${id}/comments`, {
-                    headers: {"Authorization": `Bearer ${token}`}
-                });
-                if (!response.ok) throw new Error("Unable to load comments");
-                const data = await response.json();
+                const data = await api.get(`http://localhost:8080/api/v1/news/${id}/comments`);
                 setComments(data.content);
             } catch (err) {
                 setError(err.message);
@@ -52,17 +55,7 @@ function NewsDetailPage() {
         if (!newComment.trim()) return;
         setSubmitting(true);
         try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/api/v1/comments`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({content: newComment, newsId: news.id}),
-            });
-            if (!response.ok) throw new Error("Unable to add comment");
-            const addedComment = await response.json();
+            const addedComment = await api.post(`http://localhost:8080/api/v1/comments`, { content: newComment, newsId: news.id });
             setComments(prev => [addedComment, ...prev]);
             setNewComment("");
         } catch (err) {
@@ -73,7 +66,9 @@ function NewsDetailPage() {
     };
 
     if (loading) return <p>Loading...</p>;
-    if (!news) return <p>News not found</p>;
+    if (notFound) return <NotFoundPage />;
+    if (error) return <p style={{ color: 'crimson' }}>{error}</p>;
+    if (!news) return <NotFoundPage />;
 
     return (
         <div className="news-details-container">

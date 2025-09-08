@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/slices/authSlice";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "./styles/LoginPage.css";
+import "./styles/AuthPage.css";
 
 function LoginPage() {
     const [username, setUsername] = useState("");
@@ -49,9 +47,8 @@ function LoginPage() {
     };
 
     return (
-        <div className="login-page">
-            <Header />
-            <Container className="login-container">
+        <div className="auth-page">
+            <Container className="auth-container">
                 <h2>Login</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleLogin}>
@@ -93,7 +90,6 @@ function LoginPage() {
                     </Button>
                 </Form>
             </Container>
-            <Footer />
         </div>
     );
 }

@@ -5,8 +5,13 @@ import NewsPage from "./pages/NewsPage";
 import NewsDetailPage  from "./pages/NewsDetailPage";
 import Layout from "./components/Layout";
 import './App.css';
+import './styles/global.css';
 import RegisterPage from "./pages/RegisterPage";
 import AuthorPage from "./pages/AuthorPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import AboutPage from "./pages/AboutPage";
+import HomePage from "./pages/HomePage";
+import PublicLayout from "./components/PublicLayout";
 
 function App() {
     const isAuthenticated = !!localStorage.getItem("token");
@@ -14,22 +19,25 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route element={<PublicLayout />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                </Route>
 
                 <Route
                     path="/"
                     element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}
                 >
+                    <Route index element={<HomePage />} />
                     <Route path="news" element={<NewsPage />} />
                     <Route path="/news/:id" element={<NewsDetailPage />} />
                     <Route path="/authors/:id" element={<AuthorPage />} />
                     <Route path="/news/:id/author" element={<AuthorPage />} />
-                    {/* Можешь добавить другие, например About */}
-                    {/* <Route path="about" element={<AboutPage />} /> */}
+                    <Route path="/about" element={<AboutPage />} />
                 </Route>
 
-                <Route path="*" element={<Navigate to="/login" />} />
+                <Route path="/not-found" element={<NotFoundPage />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Router>
     );

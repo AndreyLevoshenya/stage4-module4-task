@@ -126,7 +126,6 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             UserDetails user = userDetailsServiceImpl.loadUserByUsername(username);
-            System.out.println(user.getUsername());
             Long authorId = authorService.readByUserUsername(user.getUsername()).getId();
             createRequest.setAuthorId(authorId);
         }

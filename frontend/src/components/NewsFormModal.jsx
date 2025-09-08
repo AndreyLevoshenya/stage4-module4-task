@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import AsyncSelect from "react-select/async";
 import "./styles/AddNewsModal.css";
+import { api } from "../services/api";
 
-function AddNewsModal({ isOpen, onClose, onSave, initialData = null, isEdit = false }) {
+function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = false }) {
     const handleKeyDown = useCallback((e) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);
@@ -58,14 +59,9 @@ function AddNewsModal({ isOpen, onClose, onSave, initialData = null, isEdit = fa
 
     const loadTags = useCallback(async (inputValue) => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(
-                `http://localhost:8080/api/v1/tags?search=${inputValue || ""}&page=0&size=20&sort=name,asc`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const data = await api.get(
+                `http://localhost:8080/api/v1/tags?search=${inputValue || ""}&page=0&size=20&sort=name,asc`
             );
-            if (!response.ok) throw new Error("Failed to fetch tags");
-
-            const data = await response.json();
             return data.content.map(tag => ({ value: tag.id, label: tag.name }));
         } catch (err) {
             console.error(err);
@@ -100,10 +96,10 @@ function AddNewsModal({ isOpen, onClose, onSave, initialData = null, isEdit = fa
                 tagIds: selectedTags.map(tag => tag.value),
             });
             onClose();
-            window.location.reload(); // обновляем страницу
+            window.location.reload();
         } catch (err) {
             console.error(err);
-            setSubmitError("Failed to save news. Please try again.");
+            setSubmitError(err.message || "Failed to save news. Please try again.");
         }
     };
 
@@ -169,8 +165,8 @@ function AddNewsModal({ isOpen, onClose, onSave, initialData = null, isEdit = fa
                     {submitError && <p className="error-text">{submitError}</p>}
 
                     <div className="modal-actions">
-                        <button type="button" onClick={onClose}>Cancel</button>
-                        <button type="submit">{isEdit ? "Update" : "Save"}</button>
+                        <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
+                        <button type="submit" className="btn btn-primary">{isEdit ? "Update" : "Save"}</button>
                     </div>
                 </form>
             </div>
@@ -178,4 +174,6 @@ function AddNewsModal({ isOpen, onClose, onSave, initialData = null, isEdit = fa
     );
 }
 
-export default AddNewsModal;
+export default NewsFormModal;
+
+

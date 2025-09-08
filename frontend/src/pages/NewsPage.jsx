@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Form, Alert } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import AddNewsModal from "../components/AddNewsModal";
+import NewsFormModal from "../components/NewsFormModal";
 import NewsCard from "../components/NewsCard";
 import "./styles/NewsPage.css";
 import PaginationComponent from "../components/PaginationComponent";
+import NotFoundPage from "./NotFoundPage";
 
 import { fetchNews, addNews } from "../services/NewsService";
 
@@ -16,6 +17,7 @@ function NewsPage() {
     // --- State ---
     const [news, setNews] = useState([]);
     const [error, setError] = useState("");
+    const [notFound, setNotFound] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
@@ -55,7 +57,11 @@ function NewsPage() {
             setTotalElements(data.totalElements);
             setTotalPages(data.totalPages);
         } catch (err) {
-            setError(err.message);
+            if (err.status === 404) {
+                setNotFound(true);
+            } else {
+                setError(err.message);
+            }
         }
     };
 
@@ -73,11 +79,16 @@ function NewsPage() {
             setShowAddModal(false);
             loadNews();
         } catch (err) {
+            // Prefer backend error message
             alert(err.message);
         }
     };
 
     // --- Render ---
+    if (notFound) {
+        return <NotFoundPage />;
+    }
+
     return (
         <div className="news-page">
             <div className="news-container">
@@ -146,7 +157,7 @@ function NewsPage() {
             </div>
 
             {showAddModal && (
-                <AddNewsModal
+                <NewsFormModal
                     isOpen={showAddModal}
                     onClose={() => setShowAddModal(false)}
                     onSave={handleNewsAdded}

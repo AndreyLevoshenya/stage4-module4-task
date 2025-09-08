@@ -1,13 +1,12 @@
 .login-page {
     display: flex;
+    margin: 80px auto 80px auto;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #f4f7fa;
 }
 
 .login-container {
     max-width: 480px;
-    margin: 120px auto;
     padding: 2.5rem;
     background-color: #fff;
     border-radius: 12px;
@@ -50,7 +49,7 @@
 
 .login-container .form-control + .invalid-feedback {
     display: block;
-    min-height: 1.25rem; /* зарезервированное место для ошибки */
+    min-height: 1.25rem;
     margin-top: 0.25rem;
     font-size: 0.875rem;
     color: #dc3545;
@@ -66,7 +65,7 @@
     font-weight: bold;
     letter-spacing: 0.5px;
     width: 60%;
-    margin: 0 auto;
+    margin: 0 auto 20px auto;
     display: block;
     transition: background-color 0.3s, transform 0.2s;
 }

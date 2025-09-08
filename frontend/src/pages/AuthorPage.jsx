@@ -3,12 +3,15 @@ import {useLocation, useParams} from "react-router-dom";
 import NewsCard from "../components/NewsCard";
 import "./styles/AuthorPage.css";
 import {useSelector} from "react-redux";
+import { api } from "../services/api";
+import NotFoundPage from "./NotFoundPage";
 
 function AuthorPage() {
     const { id } = useParams();
     const [author, setAuthor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [notFound, setNotFound] = useState(false);
 
     const location = useLocation();
 
@@ -23,20 +26,24 @@ function AuthorPage() {
             url = `http://localhost:8080/api/v1/authors/${id}`;
         }
 
-        const token = localStorage.getItem("token");
-        fetch(url, {
-            headers: {"Authorization": `Bearer ${token}`},
-        })
-            .then((res) => res.json())
+        api.get(url)
             .then((data) => {
                 setAuthor(data);
                 setLoading(false);
             })
-            .catch((err) => console.error("Unable to load author:", err));
+            .catch((err) => {
+                if (err.status === 404) {
+                    setNotFound(true);
+                } else {
+                    setError(err.message);
+                }
+                setLoading(false);
+            });
     }, [id]);
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (notFound) return <NotFoundPage />;
+    if (error) return <p style={{ color: 'crimson' }}>Error: {error}</p>;
 
     return (
         <div className="author-page">

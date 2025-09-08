@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../store/slices/authSlice";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import "./styles/RegisterPage.css";
 
 function RegisterPage() {
@@ -71,7 +69,6 @@ function RegisterPage() {
 
     return (
         <div className="register-page">
-            <Header />
             <Container className="register-container">
                 <h2>Register</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
@@ -138,7 +135,6 @@ function RegisterPage() {
                     </Button>
                 </Form>
             </Container>
-            <Footer />
         </div>
     );
 }

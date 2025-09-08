@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Pencil, Trash } from "lucide-react";
-import AddNewsModal from "./AddNewsModal";
-import DeleteNewsModal from "./DeleteNewsModal";
+import NewsFormModal from "./NewsFormModal";
+import ConfirmModal from "./ConfirmModal";
 import { editNews, deleteNews } from "../services/NewsService";
 import "./styles/NewsActionsPanel.css"
 
@@ -55,7 +55,7 @@ function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
             </div>
 
             {showEditModal && (
-                <AddNewsModal
+                <NewsFormModal
                     isOpen={showEditModal}
                     onClose={() => setShowEditModal(false)}
                     onSave={handleSaveEdited}
@@ -65,11 +65,15 @@ function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
             )}
 
             {showDeleteModal && (
-                <DeleteNewsModal
+                <ConfirmModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
-                    onDelete={handleConfirmDelete}
-                    newsTitle={newsItem.title}
+                    onConfirm={handleConfirmDelete}
+                    title="Delete"
+                    message={`Are you sure you want to delete: "${newsItem.title}"?`}
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    confirmVariant="danger"
                 />
             )}
 

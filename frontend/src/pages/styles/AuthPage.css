@@ -1,11 +1,11 @@
-.register-page {
+.auth-page {
     display: flex;
     margin: 80px auto 80px auto;
     flex-direction: column;
     min-height: 100vh;
 }
 
-.register-container {
+.auth-container {
     max-width: 480px;
     padding: 2.5rem;
     background-color: #fff;
@@ -15,20 +15,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin: 20px auto 40px auto;
 }
 
-.register-container h2 {
+.auth-container h2 {
     text-align: center;
     margin-bottom: 2rem;
     color: #0b2239;
     font-weight: bold;
 }
 
-.register-container .form-group {
-    margin-bottom: 1.5rem;
-}
+.auth-container .form-group { margin-bottom: 1.5rem; }
 
-.register-container .form-control {
+.auth-container .form-control {
     border-radius: 8px;
     min-width: 360px;
     border: 1px solid #ccc;
@@ -37,17 +36,17 @@
     transition: border 0.3s, box-shadow 0.3s;
 }
 
-.register-container .form-control:focus {
+.auth-container .form-control:focus {
     border-color: #0b2239;
     box-shadow: 0 0 5px rgba(11,34,57,0.3);
 }
 
-.register-container .form-control.is-invalid {
+.auth-container .form-control.is-invalid {
     border-color: #dc3545;
     box-shadow: 0 0 5px rgba(220,53,69,0.3);
 }
 
-.register-container .form-control + .invalid-feedback {
+.auth-container .form-control + .invalid-feedback {
     display: block;
     min-height: 1.25rem;
     margin-top: 0.25rem;
@@ -56,7 +55,7 @@
     animation: fadeIn 0.3s ease;
 }
 
-.register-container .btn-primary {
+.auth-container .btn-primary {
     color: #ffffff;
     background-color: #0b2239;
     border: none;
@@ -70,12 +69,9 @@
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.register-container .btn-primary:hover {
-    background-color: #0f2d57;
-    transform: translateY(-2px);
-}
+.auth-container .btn-primary:hover { background-color: #0f2d57; transform: translateY(-2px); }
 
-.register-error {
+.auth-error {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
@@ -86,3 +82,5 @@
     font-weight: bold;
     animation: fadeIn 0.3s ease;
 }
+
+
