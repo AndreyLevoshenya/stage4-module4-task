@@ -1,6 +1,8 @@
 package com.mjc.school.auth;
 
+import com.mjc.school.exception.AuthException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.mjc.school.exception.ExceptionErrorCodes.AUTHENTICATION_FAILED;
 
 @Service
 public class JwtService {
@@ -68,7 +72,11 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+        try {
+            return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(String.format(AUTHENTICATION_FAILED.getErrorMessage(), e.getMessage()));
+        }
     }
 
     private SecretKey getSigningKey() {

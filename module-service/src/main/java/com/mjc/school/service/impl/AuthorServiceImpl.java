@@ -2,7 +2,7 @@ package com.mjc.school.service.impl;
 
 import com.mjc.school.annotation.Valid;
 import com.mjc.school.dto.AuthorDtoRequest;
-import com.mjc.school.dto.AuthorDtoResponse;
+import com.mjc.school.dto.AuthorDtoResponseWithNews;
 import com.mjc.school.dto.SearchingRequest;
 import com.mjc.school.exception.NotFoundException;
 import com.mjc.school.filter.EntitySpecification;
@@ -43,42 +43,42 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AuthorDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
+    public Page<AuthorDtoResponseWithNews> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
         if (searchingRequest == null) {
             LOGGER.info("Reading all authors");
-            return authorRepository.findAll(pageable).map(authorDtoMapper::modelToDto);
+            return authorRepository.findAll(pageable).map(authorDtoMapper::modelToDtoWithNews);
         }
         LOGGER.info("Reading all authors for {}", searchingRequest.getValue());
 
         Specification<Author> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
-        return authorRepository.findAll(specification, pageable).map(authorDtoMapper::modelToDto);
+        return authorRepository.findAll(specification, pageable).map(authorDtoMapper::modelToDtoWithNews);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AuthorDtoResponse readById(@Valid Long id) {
+    public AuthorDtoResponseWithNews readById(@Valid Long id) {
         LOGGER.info("Reading author by id {}", id);
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> {
                     LOGGER.warn("Author with id {} not found", id);
                     return new NotFoundException(String.format(AUTHOR_DOES_NOT_EXIST.getErrorMessage(), id));
                 });
-        return authorDtoMapper.modelToDto(author);
+        return authorDtoMapper.modelToDtoWithNews(author);
     }
 
     @Override
     @Transactional
-    public AuthorDtoResponse create(@Valid AuthorDtoRequest createRequest) {
+    public AuthorDtoResponseWithNews create(@Valid AuthorDtoRequest createRequest) {
         LOGGER.info("Creating author {}", createRequest.toString());
 
         Author model = authorDtoMapper.dtoToModel(createRequest);
         Author author = authorRepository.save(model);
-        return authorDtoMapper.modelToDto(author);
+        return authorDtoMapper.modelToDtoWithNews(author);
     }
 
     @Override
     @Transactional
-    public AuthorDtoResponse update(@Valid Long id, @Valid AuthorDtoRequest updateRequest) {
+    public AuthorDtoResponseWithNews update(@Valid Long id, @Valid AuthorDtoRequest updateRequest) {
         LOGGER.info("Updating author with id {}", id);
 
         Author author = authorRepository.findById(id)
@@ -88,12 +88,12 @@ public class AuthorServiceImpl implements AuthorService {
                 });
 
         author.setName(updateRequest.getName());
-        return authorDtoMapper.modelToDto(authorRepository.save(author));
+        return authorDtoMapper.modelToDtoWithNews(authorRepository.save(author));
     }
 
     @Override
     @Transactional
-    public AuthorDtoResponse patch(@Valid Long id, @Valid AuthorDtoRequest patchRequest) {
+    public AuthorDtoResponseWithNews patch(@Valid Long id, @Valid AuthorDtoRequest patchRequest) {
         LOGGER.info("Patching author with id {}", id);
         String name = patchRequest.getName();
 
@@ -108,7 +108,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         Author savedAuthor = authorRepository.save(prevAuthor);
-        return authorDtoMapper.modelToDto(savedAuthor);
+        return authorDtoMapper.modelToDtoWithNews(savedAuthor);
     }
 
     @Override
@@ -124,24 +124,24 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public AuthorDtoResponse readByNewsId(@Valid Long newsId) {
+    public AuthorDtoResponseWithNews readByNewsId(@Valid Long newsId) {
         LOGGER.info("Reading author by news id {}", newsId);
         Author author = authorRepository.readByNewsId(newsId).orElseThrow(() -> {
             LOGGER.warn("News with id {} not found", newsId);
             return new NotFoundException(String.format(NEWS_DOES_NOT_EXIST.getErrorMessage(), newsId));
         });
-        return authorDtoMapper.modelToDto(author);
+        return authorDtoMapper.modelToDtoWithNews(author);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AuthorDtoResponse readByUserUsername(String username) {
+    public AuthorDtoResponseWithNews readByUserUsername(String username) {
         LOGGER.info("Reading author by user username {}", username);
 
         Author author = authorRepository.readByUserUsername(username).orElseThrow(() -> {
             LOGGER.warn("Author with user username {} not found", username);
             return new NotFoundException(String.format(USER_DOES_NOT_EXIST.getErrorMessage(), username));
         });
-        return authorDtoMapper.modelToDto(author);
+        return authorDtoMapper.modelToDtoWithNews(author);
     }
 }

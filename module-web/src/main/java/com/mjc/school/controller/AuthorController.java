@@ -1,7 +1,7 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.dto.AuthorDtoRequest;
-import com.mjc.school.dto.AuthorDtoResponse;
+import com.mjc.school.dto.AuthorDtoResponseWithNews;
 import com.mjc.school.dto.SearchingRequest;
 import com.mjc.school.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(value = AUTHORS_V1_API_PATH)
-public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponse, Long> {
+public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponseWithNews, Long> {
     private final AuthorService authorService;
 
     @Autowired
@@ -54,15 +54,15 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @GetMapping
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
-    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
+    public ResponseEntity<Page<AuthorDtoResponseWithNews>> readAll(
             @RequestParam(name = "search", required = false) String search,
             @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
         SearchingRequest searchingRequest = null;
         if (search != null && !search.isBlank()) {
             searchingRequest = new SearchingRequest(search);
         }
-        Page<AuthorDtoResponse> pageDtoResponse = authorService.readAll(searchingRequest, pageable);
-        for (AuthorDtoResponse authorDtoResponse : pageDtoResponse.stream().toList()) {
+        Page<AuthorDtoResponseWithNews> pageDtoResponse = authorService.readAll(searchingRequest, pageable);
+        for (AuthorDtoResponseWithNews authorDtoResponse : pageDtoResponse.stream().toList()) {
             Link selfRel = linkTo(AuthorController.class).slash(authorDtoResponse.getId()).withSelfRel();
             authorDtoResponse.add(selfRel);
         }
@@ -81,8 +81,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @GetMapping(value = "/{id}")
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
-    public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
-        AuthorDtoResponse authorDtoResponse = authorService.readById(id);
+    public ResponseEntity<AuthorDtoResponseWithNews> readById(@PathVariable Long id) {
+        AuthorDtoResponseWithNews authorDtoResponse = authorService.readById(id);
         Link selfRel = linkTo(AuthorController.class).slash(id).withSelfRel();
         authorDtoResponse.add(selfRel);
         return new ResponseEntity<>(authorDtoResponse, OK);
@@ -99,8 +99,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @PostMapping
     @ResponseStatus(CREATED)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<AuthorDtoResponse> create(@RequestBody AuthorDtoRequest createRequest) {
-        AuthorDtoResponse authorDtoResponse = authorService.create(createRequest);
+    public ResponseEntity<AuthorDtoResponseWithNews> create(@RequestBody AuthorDtoRequest createRequest) {
+        AuthorDtoResponseWithNews authorDtoResponse = authorService.create(createRequest);
         Link selfRel = linkTo(AuthorController.class).slash(authorDtoResponse.getId()).withSelfRel();
         authorDtoResponse.add(selfRel);
         return new ResponseEntity<>(authorDtoResponse, CREATED);
@@ -117,8 +117,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @PutMapping(value = "/{id}")
     @ResponseStatus(OK)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AuthorDtoResponse> update(@PathVariable Long id, @RequestBody AuthorDtoRequest updateRequest) {
-        AuthorDtoResponse authorDtoResponse = authorService.update(id, updateRequest);
+    public ResponseEntity<AuthorDtoResponseWithNews> update(@PathVariable Long id, @RequestBody AuthorDtoRequest updateRequest) {
+        AuthorDtoResponseWithNews authorDtoResponse = authorService.update(id, updateRequest);
         Link selfRel = linkTo(AuthorController.class).slash(id).withSelfRel();
         authorDtoResponse.add(selfRel);
         return new ResponseEntity<>(authorDtoResponse, OK);
@@ -135,8 +135,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @PatchMapping(value = "/{id}")
     @ResponseStatus(OK)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AuthorDtoResponse> patch(@PathVariable Long id, @RequestBody AuthorDtoRequest updateRequest) {
-        AuthorDtoResponse authorDtoResponse = authorService.patch(id, updateRequest);
+    public ResponseEntity<AuthorDtoResponseWithNews> patch(@PathVariable Long id, @RequestBody AuthorDtoRequest updateRequest) {
+        AuthorDtoResponseWithNews authorDtoResponse = authorService.patch(id, updateRequest);
         Link selfRel = linkTo(AuthorController.class).slash(id).withSelfRel();
         authorDtoResponse.add(selfRel);
         return new ResponseEntity<>(authorDtoResponse, OK);

@@ -1,10 +1,10 @@
 import React from "react";
-import {Pencil, Trash} from "lucide-react";
 import "./styles/NewsCard.css";
 import {useNavigate} from "react-router-dom";
 import NewsTags from "./NewsTags";
+import NewsActionsPanel from "./NewsActionsPanel";
 
-function NewsCard({newsItem, onEdit, onDelete, isAdmin}) {
+function NewsCard({ newsItem, isAdmin, onAfterEdit, onAfterDelete }) {
     const navigate = useNavigate();
 
     const truncateText = (text, maxLength) => {
@@ -12,31 +12,30 @@ function NewsCard({newsItem, onEdit, onDelete, isAdmin}) {
         return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
     };
 
-    return (
-        <div className="news-card"
-             onClick={() => navigate(`/news/${newsItem.id}`)}>
+    return (<div className="news-card"
+                 onClick={() => navigate(`/news/${newsItem.id}`)}>
             <h5>{newsItem.title}</h5>
             <div className="news-date">{new Date(newsItem.createDate).toLocaleDateString()}</div>
-            <div className="news-author">{newsItem.authorDtoResponse?.name}</div>
+            <div className="news-author">
+            <span
+                className="news-author-text"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/news/${newsItem.id}/author`);
+                }}
+            >{newsItem.authorDtoResponse?.name}
+            </span>
+            </div>
             <p>{truncateText(newsItem.content, 120)}</p>
 
-            <NewsTags tags={newsItem.tagDtoResponseList} />
+            <NewsTags tags={newsItem.tagDtoResponseList}/>
 
             {isAdmin && (
-                <div className="news-actions">
-                    <button onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(newsItem);
-                    }}>
-                        <Pencil size={16}/>
-                    </button>
-                    <button onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(newsItem)
-                    }}>
-                        <Trash size={16}/>
-                    </button>
-                </div>
+                <NewsActionsPanel
+                    newsItem={newsItem}
+                    onAfterEdit={onAfterEdit}
+                    onAfterDelete={onAfterDelete}
+                />
             )}
         </div>
     );

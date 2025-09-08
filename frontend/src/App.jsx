@@ -6,6 +6,7 @@ import NewsDetailPage  from "./pages/NewsDetailPage";
 import Layout from "./components/Layout";
 import './App.css';
 import RegisterPage from "./pages/RegisterPage";
+import AuthorPage from "./pages/AuthorPage";
 
 function App() {
     const isAuthenticated = !!localStorage.getItem("token");
@@ -22,6 +23,8 @@ function App() {
                 >
                     <Route path="news" element={<NewsPage />} />
                     <Route path="/news/:id" element={<NewsDetailPage />} />
+                    <Route path="/authors/:id" element={<AuthorPage />} />
+                    <Route path="/news/:id/author" element={<AuthorPage />} />
                     {/* Можешь добавить другие, например About */}
                     {/* <Route path="about" element={<AboutPage />} /> */}
                 </Route>

@@ -1,7 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.dto.AuthorDtoRequest;
-import com.mjc.school.dto.AuthorDtoResponse;
+import com.mjc.school.dto.AuthorDtoResponseWithNews;
 import com.mjc.school.dto.SearchingRequest;
 import com.mjc.school.exception.NotFoundException;
 import com.mjc.school.mapper.AuthorDtoMapper;
@@ -51,17 +51,18 @@ class AuthorServiceImplTest {
         author.setId(1L);
         List<Author> authors = List.of(author);
         Page<Author> page = new PageImpl<>(authors);
-        AuthorDtoResponse dtoResponse = new AuthorDtoResponse(
+        AuthorDtoResponseWithNews dtoResponse = new AuthorDtoResponseWithNews(
                 author.getId(),
                 author.getName(),
                 author.getCreateDate(),
-                author.getLastUpdateDate());
+                author.getLastUpdateDate(),
+                null);
 
         when(authorRepository.findAll(pageable)).thenReturn(page);
-        when(authorDtoMapper.modelToDto(authors.get(0))).thenReturn(dtoResponse);
+        when(authorDtoMapper.modelToDtoWithNews(authors.get(0))).thenReturn(dtoResponse);
 
         // When
-        Page<AuthorDtoResponse> result = authorService.readAll(null, pageable);
+        Page<AuthorDtoResponseWithNews> result = authorService.readAll(null, pageable);
 
         // Then
         assertEquals(1, result.getContent().size());
@@ -81,20 +82,21 @@ class AuthorServiceImplTest {
         author.setId(1L);
         List<Author> authors = List.of(author);
         Page<Author> page = new PageImpl<>(authors);
-        AuthorDtoResponse dtoResponse = new AuthorDtoResponse(
+        AuthorDtoResponseWithNews dtoResponse = new AuthorDtoResponseWithNews(
                 author.getId(),
                 author.getName(),
                 author.getCreateDate(),
-                author.getLastUpdateDate());
+                author.getLastUpdateDate(),
+                null);
 
         Specification<Author> spec = (root, query, cb) ->
                 cb.equal(root.get("name"), "Name");
 
         when(authorRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
-        when(authorDtoMapper.modelToDto(authors.get(0))).thenReturn(dtoResponse);
+        when(authorDtoMapper.modelToDtoWithNews(authors.get(0))).thenReturn(dtoResponse);
 
         // When
-        Page<AuthorDtoResponse> result = authorService.readAll(request, pageable);
+        Page<AuthorDtoResponseWithNews> result = authorService.readAll(request, pageable);
 
         // Then
         assertEquals(1, result.getContent().size());
@@ -112,17 +114,18 @@ class AuthorServiceImplTest {
         Author author = new Author("Name", date, date, new ArrayList<>());
         author.setId(1L);
 
-        AuthorDtoResponse dtoResponse = new AuthorDtoResponse(
+        AuthorDtoResponseWithNews dtoResponse = new AuthorDtoResponseWithNews(
                 author.getId(),
                 author.getName(),
                 author.getCreateDate(),
-                author.getLastUpdateDate());
+                author.getLastUpdateDate(),
+                null);
 
         when(authorRepository.findById(id)).thenReturn(Optional.of(author));
-        when(authorDtoMapper.modelToDto(author)).thenReturn(dtoResponse);
+        when(authorDtoMapper.modelToDtoWithNews(author)).thenReturn(dtoResponse);
 
         // when
-        AuthorDtoResponse result = authorService.readById(id);
+        AuthorDtoResponseWithNews result = authorService.readById(id);
 
         // then
         assertNotNull(result);
@@ -154,14 +157,14 @@ class AuthorServiceImplTest {
         Author model = new Author("John Doe", dateTime, dateTime, null);
         Author saved = new Author("John Doe", dateTime, dateTime, new ArrayList<>());
         saved.setId(1L);
-        AuthorDtoResponse response = new AuthorDtoResponse(1L, "John Doe", dateTime, dateTime);
+        AuthorDtoResponseWithNews response = new AuthorDtoResponseWithNews(1L, "John Doe", dateTime, dateTime, null);
 
         when(authorDtoMapper.dtoToModel(request)).thenReturn(model);
         when(authorRepository.save(model)).thenReturn(saved);
-        when(authorDtoMapper.modelToDto(saved)).thenReturn(response);
+        when(authorDtoMapper.modelToDtoWithNews(saved)).thenReturn(response);
 
         // when
-        AuthorDtoResponse result = authorService.create(request);
+        AuthorDtoResponseWithNews result = authorService.create(request);
 
         // then
         assertNotNull(result);
@@ -180,14 +183,14 @@ class AuthorServiceImplTest {
         Author model = new Author("Updated name", dateTime, dateTime, null);
         Author saved = new Author("Updated name", dateTime, dateTime, new ArrayList<>());
         saved.setId(1L);
-        AuthorDtoResponse response = new AuthorDtoResponse(1L, "Updated name", dateTime, dateTime);
+        AuthorDtoResponseWithNews response = new AuthorDtoResponseWithNews(1L, "Updated name", dateTime, dateTime, null);
 
         when(authorRepository.findById(1L)).thenReturn(Optional.of(model));
         when(authorRepository.save(model)).thenReturn(saved);
-        when(authorDtoMapper.modelToDto(saved)).thenReturn(response);
+        when(authorDtoMapper.modelToDtoWithNews(saved)).thenReturn(response);
 
         // when
-        AuthorDtoResponse result = authorService.update(1L, updateRequest);
+        AuthorDtoResponseWithNews result = authorService.update(1L, updateRequest);
 
         // then
         assertNotNull(result);
@@ -230,14 +233,14 @@ class AuthorServiceImplTest {
         updatedAuthor.setId(id);
 
         AuthorDtoRequest patchRequest = new AuthorDtoRequest(newName);
-        AuthorDtoResponse expectedResponse = new AuthorDtoResponse(id, newName, dateTime, dateTime);
+        AuthorDtoResponseWithNews expectedResponse = new AuthorDtoResponseWithNews(id, newName, dateTime, dateTime, null);
 
         when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
         when(authorRepository.save(existingAuthor)).thenReturn(updatedAuthor);
-        when(authorDtoMapper.modelToDto(updatedAuthor)).thenReturn(expectedResponse);
+        when(authorDtoMapper.modelToDtoWithNews(updatedAuthor)).thenReturn(expectedResponse);
 
         // when
-        AuthorDtoResponse actualResponse = authorService.patch(id, patchRequest);
+        AuthorDtoResponseWithNews actualResponse = authorService.patch(id, patchRequest);
 
         // then
         assertEquals(expectedResponse, actualResponse);
@@ -260,14 +263,14 @@ class AuthorServiceImplTest {
 
         AuthorDtoRequest patchRequest = new AuthorDtoRequest(null);
 
-        AuthorDtoResponse expectedResponse = new AuthorDtoResponse(id, originalName, dateTime, dateTime);
+        AuthorDtoResponseWithNews expectedResponse = new AuthorDtoResponseWithNews(id, originalName, dateTime, dateTime, null);
 
         when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
         when(authorRepository.save(existingAuthor)).thenReturn(existingAuthor);
-        when(authorDtoMapper.modelToDto(existingAuthor)).thenReturn(expectedResponse);
+        when(authorDtoMapper.modelToDtoWithNews(existingAuthor)).thenReturn(expectedResponse);
 
         // when
-        AuthorDtoResponse actualResponse = authorService.patch(id, patchRequest);
+        AuthorDtoResponseWithNews actualResponse = authorService.patch(id, patchRequest);
 
         // then
         assertEquals(expectedResponse, actualResponse);
@@ -327,12 +330,12 @@ class AuthorServiceImplTest {
         LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         Author author = new Author("Name", dateTime, dateTime, null);
         author.setId(10L);
-        AuthorDtoResponse expectedDto = new AuthorDtoResponse(10L, "Name", dateTime, dateTime);
+        AuthorDtoResponseWithNews expectedDto = new AuthorDtoResponseWithNews(10L, "Name", dateTime, dateTime, null);
 
         when(authorRepository.readByNewsId(newsId)).thenReturn(Optional.of(author));
-        when(authorDtoMapper.modelToDto(author)).thenReturn(expectedDto);
+        when(authorDtoMapper.modelToDtoWithNews(author)).thenReturn(expectedDto);
 
-        AuthorDtoResponse actualDto = authorService.readByNewsId(newsId);
+        AuthorDtoResponseWithNews actualDto = authorService.readByNewsId(newsId);
 
         assertEquals(expectedDto, actualDto);
         verify(authorRepository).readByNewsId(newsId);

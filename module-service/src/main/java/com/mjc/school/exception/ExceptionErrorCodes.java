@@ -10,7 +10,8 @@ public enum ExceptionErrorCodes {
     RESOURCE_NOT_FOUND("000007", "Resource not found"),
     USER_DOES_NOT_EXIST("000008", "User with username %s does not exist"),
     METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION("000009", "Id url path should be a number: %s"),
-    ENTITY_ALREADY_EXISTS("000010", "Entity with such field value already exists. Value should be unique: %s");
+    ENTITY_ALREADY_EXISTS("000010", "Entity with such field value already exists. Value should be unique: %s"),
+    AUTHENTICATION_FAILED("000011", "Authentication failed: %s");
 
     private final String errorCode;
     private final String errorMessage;

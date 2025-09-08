@@ -1,27 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../store/slices/authSlice";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import './styles/RegisterPage.css';
+import "./styles/RegisterPage.css";
 
 function RegisterPage() {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
-    const [error, setError] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
     const [firstnameError, setFirstnameError] = useState("");
     const [lastnameError, setLastnameError] = useState("");
     const [usernameError, setUsernameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const { loading, error } = useSelector((state) => state.auth);
 
     const validateFirstname = (value) => {
         if (!value.trim()) return "Firstname cannot be blank";
         if (value.length < 3 || value.length > 32) return "Firstname must be 3 to 32 characters long";
         return "";
     };
+
     const validateLastname = (value) => {
         if (!value.trim()) return "Lastname cannot be blank";
         if (value.length < 3 || value.length > 32) return "Lastname must be 3 to 32 characters long";
@@ -43,33 +50,22 @@ function RegisterPage() {
     const handleRegister = async (e) => {
         e.preventDefault();
 
+        const fError = validateFirstname(firstname);
+        const lError = validateLastname(lastname);
         const uError = validateUsername(username);
         const pError = validatePassword(password);
 
+        setFirstnameError(fError);
+        setLastnameError(lError);
         setUsernameError(uError);
         setPasswordError(pError);
 
-        if (uError || pError) return;
+        if (fError || lError || uError || pError) return;
 
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstname, lastname, username, password }),
-            });
+        const result = await dispatch(registerUser({ firstname, lastname, username, password }));
 
-            if (!response.ok) {
-                if (response.status === 401) setError("Invalid data");
-                else if (response.status >= 500) setError("Server error. Please try again later.");
-                else setError("Register failed.");
-                return;
-            }
-
-            const data = await response.json();
-            localStorage.setItem("token", data.token);
+        if (result.meta.requestStatus === "fulfilled") {
             navigate("/news");
-        } catch {
-            setError("Network error. Please check your connection.");
         }
     };
 
@@ -92,10 +88,9 @@ function RegisterPage() {
                             isInvalid={!!firstnameError}
                             autoFocus
                         />
-                        <Form.Control.Feedback type="invalid">
-                            {firstnameError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{firstnameError}</Form.Control.Feedback>
                     </Form.Group>
+
                     <Form.Group controlId="lastname" className="form-group">
                         <Form.Control
                             type="text"
@@ -106,12 +101,10 @@ function RegisterPage() {
                                 setLastnameError(validateLastname(e.target.value));
                             }}
                             isInvalid={!!lastnameError}
-                            autoFocus
                         />
-                        <Form.Control.Feedback type="invalid">
-                            {lastnameError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{lastnameError}</Form.Control.Feedback>
                     </Form.Group>
+
                     <Form.Group controlId="username" className="form-group">
                         <Form.Control
                             type="text"
@@ -122,11 +115,8 @@ function RegisterPage() {
                                 setUsernameError(validateUsername(e.target.value));
                             }}
                             isInvalid={!!usernameError}
-                            autoFocus
                         />
-                        <Form.Control.Feedback type="invalid">
-                            {usernameError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{usernameError}</Form.Control.Feedback>
                     </Form.Group>
 
                     <Form.Group controlId="password" className="form-group">
@@ -140,13 +130,11 @@ function RegisterPage() {
                             }}
                             isInvalid={!!passwordError}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            {passwordError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{passwordError}</Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button type="submit" className="btn-primary">
-                        Sign In
+                    <Button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? "Registering..." : "Register"}
                     </Button>
                 </Form>
             </Container>

@@ -1,12 +1,11 @@
 package com.mjc.school.service;
 
-import com.mjc.school.annotation.Valid;
 import com.mjc.school.dto.SearchingRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BaseService<T, R, K> {
-    Page<R> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable);
+    Page<R> readAll(SearchingRequest searchingRequest, Pageable pageable);
 
     R readById(K id);
 

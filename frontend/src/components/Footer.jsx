@@ -4,7 +4,7 @@ import './styles/Footer.css';
 function Footer() {
     return (
         <footer className="footer">
-            <p>&copy; 2025 MJC School Student. All Rights Reserved</p>
+            <p>&copy; 2025 Andrey Levoshenya. MJC School Student. All Rights Reserved</p>
         </footer>
     );
 }

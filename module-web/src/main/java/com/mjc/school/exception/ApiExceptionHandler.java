@@ -11,11 +11,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.mjc.school.exception.ExceptionErrorCodes.API_VERSION_NOT_SUPPORTED;
-import static com.mjc.school.exception.ExceptionErrorCodes.ENTITY_ALREADY_EXISTS;
-import static com.mjc.school.exception.ExceptionErrorCodes.METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION;
-import static com.mjc.school.exception.ExceptionErrorCodes.RESOURCE_NOT_FOUND;
-import static com.mjc.school.exception.ExceptionErrorCodes.VALIDATION_EXCEPTION;
+import static com.mjc.school.exception.ExceptionErrorCodes.*;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -74,6 +70,18 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 ENTITY_ALREADY_EXISTS.getErrorCode(),
                 ENTITY_ALREADY_EXISTS.getErrorMessage().formatted(e.getMessage()),
+                status,
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        );
+        return new ResponseEntity<>(apiException, status);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<Object> handleValidationException(AuthException e) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        ApiException apiException = new ApiException(
+                AUTHENTICATION_FAILED.getErrorCode(),
+                e.getLocalizedMessage(),
                 status,
                 LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         );

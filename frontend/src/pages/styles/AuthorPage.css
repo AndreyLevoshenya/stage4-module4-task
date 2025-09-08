@@ -1,0 +1,55 @@
+.author-page {
+    max-width: 900px;
+    margin: 80px auto 40px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.author-page h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #222;
+}
+
+.author-page p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 4px 0;
+}
+
+.author-page p strong {
+    color: #333;
+}
+
+.author-page h3 {
+    margin-top: 30px;
+    font-size: 1.4rem;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+}
+
+.author-news-list {
+    margin-top: 20px;
+    display: flex;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+    .author-news-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Сообщение об отсутствии новостей */
+.author-page p:empty::before {
+    content: "This author hasn't got any news.";
+    font-style: italic;
+    color: #888;
+}

@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 import './styles/Header.css';
 import logo from './assets/images/logo.png';
 
 function Header() {
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        setIsAuthenticated(!!token);
-    }, []);
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
     const handleSignOut = () => {
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
+        dispatch(logout());
         navigate("/login");
     };
 

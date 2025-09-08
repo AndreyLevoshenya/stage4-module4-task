@@ -6,7 +6,7 @@ import com.mjc.school.dto.NewsDtoResponse;
 import com.mjc.school.dto.ParametersDtoRequest;
 import com.mjc.school.dto.SearchingRequest;
 import com.mjc.school.exception.NotFoundException;
-import com.mjc.school.filter.EntitySpecification;
+import com.mjc.school.filter.NewsSpecification;
 import com.mjc.school.mapper.NewsDtoMapper;
 import com.mjc.school.model.Author;
 import com.mjc.school.model.News;
@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.mjc.school.exception.ExceptionErrorCodes.*;
@@ -37,7 +39,6 @@ import static com.mjc.school.exception.ExceptionErrorCodes.*;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class NewsServiceImpl implements NewsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NewsServiceImpl.class);
-    private static final List<String> fieldsToSearch = List.of("title", "content");
 
     private final NewsRepository newsRepository;
     private final AuthorRepository authorRepository;
@@ -52,16 +53,61 @@ public class NewsServiceImpl implements NewsService {
         this.newsDtoMapper = newsDtoMapper;
     }
 
+    private String parseSearchGetText(String search) {
+        if (search == null || search.isBlank()) {
+            return null;
+        }
+
+        String text;
+
+        Pattern pattern = Pattern.compile("#\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(search);
+
+        text = matcher.replaceAll("").trim();
+
+        return text;
+    }
+
+    private List<String> parseSearchGetTags(String search) {
+        if (search == null || search.isBlank()) {
+            return null;
+        }
+
+        List<String> tags = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("#\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(search);
+
+        while (matcher.find()) {
+            tags.add(matcher.group(1).trim());
+        }
+
+        return tags;
+    }
+
     @Override
     @Transactional(readOnly = true)
-    public Page<NewsDtoResponse> readAll(@Valid SearchingRequest searchingRequest, Pageable pageable) {
+    public Page<NewsDtoResponse> readAll(SearchingRequest searchingRequest, Pageable pageable) {
         if (searchingRequest == null) {
             LOGGER.info("Reading all the news");
             return newsRepository.findAll(pageable).map(newsDtoMapper::modelToDto);
         }
-        LOGGER.info("Reading all the news for {}", searchingRequest.getValue());
-        Specification<News> specification = EntitySpecification.searchByFields(fieldsToSearch, searchingRequest.getValue());
-        return newsRepository.findAll(specification, pageable).map(newsDtoMapper::modelToDto);
+
+        String searchValue = searchingRequest.getValue();
+        LOGGER.info("Reading all the news for {}", searchValue);
+
+        Specification<News> spec = Specification.where(
+                NewsSpecification.searchByText(parseSearchGetText(searchValue))
+        );
+
+        List<String> searchingTags = parseSearchGetTags(searchValue);
+
+        if (searchingTags != null && !searchingTags.isEmpty()) {
+            spec = spec.and(NewsSpecification.hasTags(searchingTags));
+        }
+
+        return newsRepository.findAll(spec, pageable)
+                .map(newsDtoMapper::modelToDto);
     }
 
     @Override

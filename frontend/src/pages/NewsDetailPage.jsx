@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import './styles/NewsDetailPage.css';
 import NewsTags from "../components/NewsTags";
+import NewsActionsPanel from "../components/NewsActionsPanel";
+import {useSelector} from "react-redux";
 
 function NewsDetailPage() {
     const {id} = useParams();
@@ -12,9 +14,12 @@ function NewsDetailPage() {
     const [newComment, setNewComment] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
+    const navigate = useNavigate();
+
+    const roles = useSelector((state) => state.auth.roles || []);
+
     useEffect(() => {
         const token = localStorage.getItem("token");
-
         fetch(`http://localhost:8080/api/v1/news/${id}`, {
             headers: {"Authorization": `Bearer ${token}`},
         })
@@ -23,7 +28,7 @@ function NewsDetailPage() {
                 setNews(data);
                 setLoading(false);
             })
-            .catch((err) => console.error("Error loading news:", err));
+            .catch((err) => console.error("Unable to load news:", err));
     }, [id]);
 
     useEffect(() => {
@@ -33,7 +38,7 @@ function NewsDetailPage() {
                 const response = await fetch(`http://localhost:8080/api/v1/news/${id}/comments`, {
                     headers: {"Authorization": `Bearer ${token}`}
                 });
-                if (!response.ok) throw new Error("Ошибка загрузки комментариев");
+                if (!response.ok) throw new Error("Unable to load comments");
                 const data = await response.json();
                 setComments(data.content);
             } catch (err) {
@@ -56,7 +61,7 @@ function NewsDetailPage() {
                 },
                 body: JSON.stringify({content: newComment, newsId: news.id}),
             });
-            if (!response.ok) throw new Error("Ошибка при добавлении комментария");
+            if (!response.ok) throw new Error("Unable to add comment");
             const addedComment = await response.json();
             setComments(prev => [addedComment, ...prev]);
             setNewComment("");
@@ -72,8 +77,23 @@ function NewsDetailPage() {
 
     return (
         <div className="news-details-container">
+            {roles.includes("ADMIN") && (
+                <NewsActionsPanel
+                    newsItem={news}
+                    onAfterEdit={(updated) => setNews(updated)}
+                    onAfterDelete={() => navigate("/news")}
+                />
+            )}
             <div className="news-detail">
                 <h2 className="news-details-title">{news.title}</h2>
+                <span
+                    className="news-author-text"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/news/${news.id}/author`);
+                    }}
+                >{news.authorDtoResponse?.name}
+                </span>
                 <p className="news-details-content">{news.content}</p>
                 <NewsTags tags={news.tagDtoResponseList}/>
                 <h3>Comments</h3>

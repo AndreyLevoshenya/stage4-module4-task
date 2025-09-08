@@ -1,7 +1,7 @@
 package com.mjc.school.dto;
 
 public class SearchingRequest {
-    private String value;
+    protected String value;
 
     public SearchingRequest() {
     }

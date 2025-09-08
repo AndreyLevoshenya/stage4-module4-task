@@ -209,11 +209,11 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
             @ApiResponse(responseCode = "500", description = "Application failed to process the request")})
-    @GetMapping(value = "/{id}/authors")
+    @GetMapping(value = "/{id}/author")
     @ResponseStatus(OK)
     @PreAuthorize("permitAll()")
-    public ResponseEntity<AuthorDtoResponse> readAuthorByNewsId(@PathVariable Long id) {
-        AuthorDtoResponse authorDtoResponse = authorService.readByNewsId(id);
+    public ResponseEntity<AuthorDtoResponseWithNews> readAuthorByNewsId(@PathVariable Long id) {
+        AuthorDtoResponseWithNews authorDtoResponse = authorService.readByNewsId(id);
         Link selfRel = linkTo(AuthorController.class).slash(authorDtoResponse.getId()).withSelfRel();
         authorDtoResponse.add(selfRel);
         return new ResponseEntity<>(authorDtoResponse, OK);

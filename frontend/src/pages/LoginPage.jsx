@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../store/slices/authSlice";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import './styles/LoginPage.css';
+import "./styles/LoginPage.css";
 
 function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const [usernameError, setUsernameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
     const validateUsername = (value) => {
         if (!value.trim()) return "Username cannot be blank";
@@ -36,25 +41,10 @@ function LoginPage() {
 
         if (uError || pError) return;
 
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/auth/authenticate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-            });
+        const result = await dispatch(loginUser({ username, password }));
 
-            if (!response.ok) {
-                if (response.status === 401) setError("Invalid username or password");
-                else if (response.status >= 500) setError("Server error. Please try again later.");
-                else setError("Login failed. Please check your credentials.");
-                return;
-            }
-
-            const data = await response.json();
-            localStorage.setItem("token", data.token);
+        if (result.meta.requestStatus === "fulfilled") {
             navigate("/news");
-        } catch {
-            setError("Network error. Please check your connection.");
         }
     };
 
@@ -98,8 +88,8 @@ function LoginPage() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button type="submit" className="btn-primary">
-                        Sign In
+                    <Button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? "Signing in..." : "Sign In"}
                     </Button>
                 </Form>
             </Container>
