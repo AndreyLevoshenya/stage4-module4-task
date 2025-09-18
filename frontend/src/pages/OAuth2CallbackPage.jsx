@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { loginWithOAuth2 } from "../store/slices/authSlice";
+import {useNavigate} from "react-router-dom";
+import {loginWithOAuth2} from "../store/slices/authSlice";
 
 function OAuth2Callback() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { isAuthenticated, loading } = useSelector((state) => state.auth);
+    const {isAuthenticated, loading} = useSelector((state) => state.auth);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);

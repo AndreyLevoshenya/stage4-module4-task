@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {useParams, useNavigate, useLocation} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import './styles/NewsDetailPage.css';
 import NewsTags from "../components/NewsTags";
 import NewsActionsPanel from "../components/NewsActionsPanel";
 import {useSelector} from "react-redux";
-import { api } from "../services/api";
+import {api} from "../services/api";
 import NotFoundPage from "./NotFoundPage";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { validateComment } from "../utils/validation";
-import { handleError, isNotFoundError } from "../utils/errorHandler";
+import {validateComment} from "../utils/validation";
+import {handleError} from "../utils/errorHandler";
 
 function NewsDetailPage() {
     const {id} = useParams();
@@ -65,11 +65,14 @@ function NewsDetailPage() {
             setCommentError(commentValidation);
             return;
         }
-        
+
         setCommentError("");
         setSubmitting(true);
         try {
-            const addedComment = await api.post(`http://localhost:8080/api/v1/comments`, { content: newComment, newsId: news.id });
+            const addedComment = await api.post(`http://localhost:8080/api/v1/comments`, {
+                content: newComment,
+                newsId: news.id
+            });
             setComments(prev => [addedComment, ...prev]);
             setNewComment("");
         } catch (err) {
@@ -79,10 +82,10 @@ function NewsDetailPage() {
         }
     };
 
-    if (loading) return <LoadingSpinner text="Loading news..." />;
-    if (notFound) return <NotFoundPage />;
-    if (error) return <p style={{ color: 'crimson' }}>{error}</p>;
-    if (!news) return <NotFoundPage />;
+    if (loading) return <LoadingSpinner text="Loading news..."/>;
+    if (notFound) return <NotFoundPage/>;
+    if (error) return <p style={{color: 'crimson'}}>{error}</p>;
+    if (!news) return <NotFoundPage/>;
 
     return (
         <div className="news-details-container">
@@ -107,8 +110,8 @@ function NewsDetailPage() {
                 <NewsTags tags={news.tagDtoResponseList}/>
                 <h3>Comments</h3>
                 <div className="add-comment">
-                    <textarea 
-                        placeholder="Write a comment..." 
+                    <textarea
+                        placeholder="Write a comment..."
                         value={newComment}
                         onChange={(e) => {
                             const value = e.target.value;
@@ -118,8 +121,8 @@ function NewsDetailPage() {
                     />
                     {commentError && <p className="error-text">{commentError}</p>}
                     <button onClick={handleAddComment}
-                            disabled={submitting || !!commentError}> 
-                        {submitting ? "Sending..." : "Send"} 
+                            disabled={submitting || !!commentError}>
+                        {submitting ? "Sending..." : "Send"}
                     </button>
                 </div>
                 {comments.length === 0 ? (<p>No comments yet</p>) : (comments.map((comment) => (

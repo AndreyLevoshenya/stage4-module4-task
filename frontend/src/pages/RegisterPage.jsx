@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, Button, Alert } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../store/slices/authSlice";
-import { validateFirstname, validateLastname, validateUsername, validatePassword } from "../utils/validation";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Alert, Button, Form} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {registerUser} from "../store/slices/authSlice";
+import {validateFirstname, validateLastname, validatePassword, validateUsername} from "../utils/validation";
 import "./styles/AuthPage.css";
 import {googleOAuth2} from "../services/oauthService";
 
@@ -21,7 +21,7 @@ function RegisterPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { loading, error } = useSelector((state) => state.auth);
+    const {loading, error} = useSelector((state) => state.auth);
 
 
     const handleRegister = async (e) => {
@@ -39,7 +39,7 @@ function RegisterPage() {
 
         if (fError || lError || uError || pError) return;
 
-        const result = await dispatch(registerUser({ firstname, lastname, username, password }));
+        const result = await dispatch(registerUser({firstname, lastname, username, password}));
 
         if (result.meta.requestStatus === "fulfilled") {
             navigate("/news");

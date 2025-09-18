@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/NewsTags.css";
 
-function NewsTags({ tags }) {
+function NewsTags({tags}) {
     if (!tags || tags.length === 0) return null;
 
     return (

@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0b2239; /* такой же фон, как у Header */
+    background-color: #0b2239;
     padding: 0.5rem 1rem;
     color: white;
     font-family: Arial, sans-serif;

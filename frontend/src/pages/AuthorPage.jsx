@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {useLocation, useParams} from "react-router-dom";
 import NewsCard from "../components/NewsCard";
 import "./styles/AuthorPage.css";
 import {useSelector} from "react-redux";
-import { api } from "../services/api";
+import {api} from "../services/api";
 import NotFoundPage from "./NotFoundPage";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function AuthorPage() {
-    const { id } = useParams();
+    const {id} = useParams();
     const [author, setAuthor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -42,9 +42,9 @@ function AuthorPage() {
             });
     }, [id]);
 
-    if (loading) return <LoadingSpinner text="Loading author..." />;
-    if (notFound) return <NotFoundPage />;
-    if (error) return <p style={{ color: 'crimson' }}>Error: {error}</p>;
+    if (loading) return <LoadingSpinner text="Loading author..."/>;
+    if (notFound) return <NotFoundPage/>;
+    if (error) return <p style={{color: 'crimson'}}>Error: {error}</p>;
 
     return (
         <div className="author-page">
@@ -61,7 +61,7 @@ function AuthorPage() {
                             newsItem={newsItem}
                             onEdit={null}
                             onDelete={null}
-                            isAdmin={roles.includes("ADMIN")} />
+                            isAdmin={roles.includes("ADMIN")}/>
                     ))}
                 </div>
             ) : (

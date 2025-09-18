@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Alert } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../store/slices/authSlice";
-import { validateUsername, validatePassword } from "../utils/validation";
-import { googleOAuth2 } from "../services/oauthService";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Alert, Button, Form} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {loginUser} from "../store/slices/authSlice";
+import {validatePassword, validateUsername} from "../utils/validation";
+import {googleOAuth2} from "../services/oauthService";
 import "./styles/AuthPage.css";
 
 function LoginPage() {
@@ -16,7 +16,7 @@ function LoginPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { loading, error } = useSelector((state) => state.auth);
+    const {loading, error} = useSelector((state) => state.auth);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -26,7 +26,7 @@ function LoginPage() {
         setPasswordError(pError);
         if (uError || pError) return;
 
-        const result = await dispatch(loginUser({ username, password }));
+        const result = await dispatch(loginUser({username, password}));
         if (result.meta.requestStatus === "fulfilled") navigate("/news");
     };
 

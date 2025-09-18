@@ -1,4 +1,4 @@
-import { CONFIG } from "../config/constants";
+import {CONFIG} from "../config/constants";
 
 export const googleOAuth2 = {
     redirectToBackend: () => {

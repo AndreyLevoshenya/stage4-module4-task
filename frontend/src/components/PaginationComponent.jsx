@@ -1,8 +1,8 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import "./styles/PaginationComponent.css"
 
-function PaginationComponent({ page, size, totalPages, onPageChange, onSizeChange }) {
+function PaginationComponent({page, size, totalPages, onPageChange, onSizeChange}) {
     const renderPages = () => {
         const pages = [];
         const neighbors = 2;
@@ -23,8 +23,10 @@ function PaginationComponent({ page, size, totalPages, onPageChange, onSizeChang
             );
         }
 
-        if (page < totalPages - 1) pages.push(<Button key="next" size="sm" onClick={() => onPageChange(page + 1)}> &gt; </Button>);
-        if (page < totalPages - 1) pages.push(<Button key="last" size="sm" onClick={() => onPageChange(totalPages - 1)}> &gt;&gt; </Button>);
+        if (page < totalPages - 1) pages.push(<Button key="next" size="sm"
+                                                      onClick={() => onPageChange(page + 1)}> &gt; </Button>);
+        if (page < totalPages - 1) pages.push(<Button key="last" size="sm"
+                                                      onClick={() => onPageChange(totalPages - 1)}> &gt;&gt; </Button>);
 
         return pages;
     };

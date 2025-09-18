@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/LoadingSpinner.css';
 
-function LoadingSpinner({ size = 'medium', text = 'Loading...' }) {
+function LoadingSpinner({size = 'medium', text = 'Loading...'}) {
     return (
         <div className={`loading-spinner ${size}`}>
             <div className="spinner"></div>

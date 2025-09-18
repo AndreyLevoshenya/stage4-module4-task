@@ -1,15 +1,15 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import { decodeJwtPayload } from "../../utils/jwt";
-import { buildApiUrl } from "../../config/constants";
+import {decodeJwtPayload} from "../../utils/jwt";
+import {buildApiUrl} from "../../config/constants";
 
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
-    async ({ username, password }, thunkAPI) => {
+    async ({username, password}, thunkAPI) => {
         try {
             const response = await fetch(buildApiUrl("AUTH", "/authenticate"), {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username, password}),
             });
 
             if (!response.ok) {
@@ -34,7 +34,7 @@ export const loginWithOAuth2 = createAsyncThunk(
     async (token, thunkAPI) => {
         try {
             const payload = decodeJwtPayload(token);
-            return { token, payload };
+            return {token, payload};
         } catch (e) {
             return thunkAPI.rejectWithValue("Invalid OAuth2 token");
         }
@@ -43,12 +43,12 @@ export const loginWithOAuth2 = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
     "auth/registerUser",
-    async ({ firstname, lastname, username, password }, thunkAPI) => {
+    async ({firstname, lastname, username, password}, thunkAPI) => {
         try {
             const response = await fetch(buildApiUrl("AUTH", "/register"), {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstname, lastname, username, password }),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({firstname, lastname, username, password}),
             });
 
             if (!response.ok) {
@@ -136,5 +136,5 @@ const authSlice = createSlice({
     }
 });
 
-export const { logout } = authSlice.actions;
+export const {logout} = authSlice.actions;
 export default authSlice.reducer;

@@ -1,9 +1,9 @@
-import { api } from "./api";
-import { buildApiUrl } from "../config/constants";
+import {api} from "./api";
+import {buildApiUrl} from "../config/constants";
 
 const API_URL = buildApiUrl("NEWS");
 
-export const fetchNews = async ({ page, size, sortField, sort, search }) => {
+export const fetchNews = async ({page, size, sortField, sort, search}) => {
     const params = new URLSearchParams({
         page,
         size,

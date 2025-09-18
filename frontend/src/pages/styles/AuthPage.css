@@ -10,7 +10,7 @@
     padding: 2.5rem;
     background-color: #fff;
     border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -25,7 +25,9 @@
     font-weight: bold;
 }
 
-.auth-container .form-group { margin-bottom: 1.5rem; }
+.auth-container .form-group {
+    margin-bottom: 1.5rem;
+}
 
 .auth-container .form-control {
     border-radius: 8px;
@@ -38,12 +40,12 @@
 
 .auth-container .form-control:focus {
     border-color: #0b2239;
-    box-shadow: 0 0 5px rgba(11,34,57,0.3);
+    box-shadow: 0 0 5px rgba(11, 34, 57, 0.3);
 }
 
 .auth-container .form-control.is-invalid {
     border-color: #dc3545;
-    box-shadow: 0 0 5px rgba(220,53,69,0.3);
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
 }
 
 .auth-container .form-control + .invalid-feedback {
@@ -69,7 +71,10 @@
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.auth-container .btn-primary:hover { background-color: #0f2d57; transform: translateY(-2px); }
+.auth-container .btn-primary:hover {
+    background-color: #0f2d57;
+    transform: translateY(-2px);
+}
 
 .auth-divider {
     display: flex;

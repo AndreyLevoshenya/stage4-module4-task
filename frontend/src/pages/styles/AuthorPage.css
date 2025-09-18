@@ -4,7 +4,7 @@
     padding: 24px;
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
 }
 
@@ -40,14 +40,6 @@
     gap: 16px;
 }
 
-/* Адаптив для мобильных */
-@media (max-width: 768px) {
-    .author-news-list {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Сообщение об отсутствии новостей */
 .author-page p:empty::before {
     content: "This author hasn't got any news.";
     font-style: italic;

@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import AsyncSelect from "react-select/async";
-import { Form, Button } from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import "./styles/AddNewsModal.css";
-import { api } from "../services/api";
-import { validateNewsTitle, validateNewsContent, validateTag } from "../utils/validation";
-import { buildApiUrl } from "../config/constants";
-import { showError } from "../utils/notifications";
+import {api} from "../services/api";
+import {validateNewsContent, validateNewsTitle, validateTag} from "../utils/validation";
+import {buildApiUrl} from "../config/constants";
+import {showError} from "../utils/notifications";
 
-function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = false }) {
+function NewsFormModal({isOpen, onClose, onSave, initialData = null, isEdit = false}) {
     const handleKeyDown = useCallback((e) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);
@@ -22,7 +22,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
     const getInitialState = () => ({
         title: initialData?.title || "",
         content: initialData?.content || "",
-        selectedTags: initialData?.tags?.map(tag => ({ value: tag.id, label: tag.name })) || []
+        selectedTags: initialData?.tags?.map(tag => ({value: tag.id, label: tag.name})) || []
     });
 
     const [title, setTitle] = useState(getInitialState().title);
@@ -35,7 +35,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
 
     useEffect(() => {
         if (isOpen) {
-            const { title, content, selectedTags } = getInitialState();
+            const {title, content, selectedTags} = getInitialState();
             setTitle(title);
             setContent(content);
             setSelectedTags(selectedTags);
@@ -50,7 +50,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
             const data = await api.get(
                 `${buildApiUrl("TAGS")}?search=${inputValue || ""}&page=0&size=20&sort=name,asc`
             );
-            return data.content.map(tag => ({ value: tag.id, label: tag.name }));
+            return data.content.map(tag => ({value: tag.id, label: tag.name}));
         } catch (err) {
             showError("Failed to load tags");
             return [];
@@ -111,7 +111,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
                             onChange={e => {
                                 const value = e.target.value;
                                 setTitle(value);
-                                setErrors(prev => ({ ...prev, title: validateNewsTitle(value) }));
+                                setErrors(prev => ({...prev, title: validateNewsTitle(value)}));
                             }}
                             isInvalid={!!errors.title}
                             required
@@ -128,7 +128,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
                             onChange={e => {
                                 const value = e.target.value;
                                 setContent(value);
-                                setErrors(prev => ({ ...prev, content: validateNewsContent(value) }));
+                                setErrors(prev => ({...prev, content: validateNewsContent(value)}));
                             }}
                             isInvalid={!!errors.content}
                             required
@@ -155,7 +155,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
                                     const tagError = validateTag(label);
                                     if (tagError) newErrors[`tag-${index}`] = tagError;
                                 });
-                                setErrors(prev => ({ ...prev, ...newErrors }));
+                                setErrors(prev => ({...prev, ...newErrors}));
                             }}
                             placeholder={isLoadingTags ? "Loading tags..." : "Search and select tags..."}
                             isLoading={isLoadingTags}

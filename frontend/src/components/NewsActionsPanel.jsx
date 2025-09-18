@@ -1,19 +1,25 @@
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
-import { Pencil, Trash } from "lucide-react";
+import React, {useState} from "react";
+import {Button} from "react-bootstrap";
+import {Pencil, Trash} from "lucide-react";
 import NewsFormModal from "./NewsFormModal";
 import ConfirmModal from "./ConfirmModal";
-import { editNews, deleteNews } from "../services/NewsService";
+import {deleteNews, editNews} from "../services/NewsService";
 import "./styles/NewsActionsPanel.css"
 
-function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
+function NewsActionsPanel({newsItem, onAfterEdit, onAfterDelete}) {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const openEdit = (e) => { e.stopPropagation(); setShowEditModal(true); };
-    const openDelete = (e) => { e.stopPropagation(); setShowDeleteModal(true); };
+    const openEdit = (e) => {
+        e.stopPropagation();
+        setShowEditModal(true);
+    };
+    const openDelete = (e) => {
+        e.stopPropagation();
+        setShowDeleteModal(true);
+    };
 
     const handleSaveEdited = async (newsData) => {
         setLoading(true);
@@ -46,11 +52,12 @@ function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
     return (
         <div>
             <div className="news-actions">
-                <Button className="news-actions-button" onClick={openEdit} aria-label="Edit" title="Edit" >
-                    <Pencil size={16} />
+                <Button className="news-actions-button" onClick={openEdit} aria-label="Edit" title="Edit">
+                    <Pencil size={16}/>
                 </Button>
-                <Button className="news-actions-button" variant="danger" onClick={openDelete} aria-label="Delete" title="Delete" >
-                    <Trash size={16} />
+                <Button className="news-actions-button" variant="danger" onClick={openDelete} aria-label="Delete"
+                        title="Delete">
+                    <Trash size={16}/>
                 </Button>
             </div>
 
@@ -59,7 +66,7 @@ function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
                     isOpen={showEditModal}
                     onClose={() => setShowEditModal(false)}
                     onSave={handleSaveEdited}
-                    initialData={{ ...newsItem, tags: newsItem.tagDtoResponseList }}
+                    initialData={{...newsItem, tags: newsItem.tagDtoResponseList}}
                     isEdit
                 />
             )}

@@ -1,4 +1,4 @@
-import { CONFIG } from '../config/constants';
+import {CONFIG} from '../config/constants';
 
 const validateField = (value, fieldName, minLength, maxLength) => {
     if (!value.trim()) return `${fieldName} cannot be blank`;

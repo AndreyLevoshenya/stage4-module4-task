@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Form, Alert } from "react-bootstrap";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Alert, Form} from "react-bootstrap";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 import NewsFormModal from "../components/NewsFormModal";
 import NewsCard from "../components/NewsCard";
 import "./styles/NewsPage.css";
 import PaginationComponent from "../components/PaginationComponent";
 import NotFoundPage from "./NotFoundPage";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { showError } from "../utils/notifications";
-import { CONFIG } from "../config/constants";
+import {showError} from "../utils/notifications";
+import {CONFIG} from "../config/constants";
 
-import { fetchNews, addNews } from "../services/NewsService";
+import {addNews, fetchNews} from "../services/NewsService";
 
 function NewsPage() {
     const navigate = useNavigate();
@@ -59,7 +59,7 @@ function NewsPage() {
     }, [page, size, sort, search]);
 
     useEffect(() => {
-        const params = { page, size, sortField, sort };
+        const params = {page, size, sortField, sort};
         if (search) params.search = search;
         setSearchParams(params);
     }, [page, size, sortField, sort, search, setSearchParams]);
@@ -71,9 +71,9 @@ function NewsPage() {
         } else {
             setSearchLoading(true);
         }
-        
+
         try {
-            const data = await fetchNews({ page, size, sortField, sort, search });
+            const data = await fetchNews({page, size, sortField, sort, search});
             setNews(data.content);
             setTotalElements(data.totalElements);
             setTotalPages(data.totalPages);
@@ -106,11 +106,11 @@ function NewsPage() {
     }, [loadNews]);
 
     if (loading) {
-        return <LoadingSpinner text="Loading news..." />;
+        return <LoadingSpinner text="Loading news..."/>;
     }
 
     if (notFound) {
-        return <NotFoundPage />;
+        return <NotFoundPage/>;
     }
 
     return (

@@ -1,5 +1,5 @@
-import { getErrorMessage, ERROR_CODES } from "../constants/errorCodes";
-import { CONFIG } from "../config/constants";
+import {getErrorMessage} from "../constants/errorCodes";
+import {CONFIG} from "../config/constants";
 
 const getAuthToken = () => localStorage.getItem("token");
 
@@ -8,7 +8,7 @@ const parseError = async (response) => {
         const data = await response.json();
         const backendMessage = data?.errorMessage || data?.message;
         const userFriendlyMessage = getErrorMessage(data?.errorCode, backendMessage);
-        
+
         return {
             status: response.status,
             errorCode: data?.errorCode,
@@ -35,7 +35,7 @@ export async function apiFetch(url, options = {}) {
         headers.set("Authorization", `Bearer ${token}`);
     }
 
-    const fetchOptions = { ...options, headers };
+    const fetchOptions = {...options, headers};
 
     const response = await fetch(url, fetchOptions);
 
@@ -69,8 +69,8 @@ export async function apiFetch(url, options = {}) {
 }
 
 export const api = {
-    get: (url) => apiFetch(url, { method: "GET" }),
-    post: (url, body) => apiFetch(url, { method: "POST", body: JSON.stringify(body) }),
-    patch: (url, body) => apiFetch(url, { method: "PATCH", body: JSON.stringify(body) }),
-    delete: (url) => apiFetch(url, { method: "DELETE" }),
+    get: (url) => apiFetch(url, {method: "GET"}),
+    post: (url, body) => apiFetch(url, {method: "POST", body: JSON.stringify(body)}),
+    patch: (url, body) => apiFetch(url, {method: "PATCH", body: JSON.stringify(body)}),
+    delete: (url) => apiFetch(url, {method: "DELETE"}),
 };

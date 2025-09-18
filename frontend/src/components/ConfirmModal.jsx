@@ -1,16 +1,16 @@
-import React, { useEffect, useCallback } from "react";
+import React, {useCallback, useEffect} from "react";
 import "./styles/ConfirmModal.css";
 import {Button} from "react-bootstrap";
 
 function ConfirmModal({
-    isOpen,
-    onClose,
-    onConfirm,
-    title = "Confirm action",
-    message = "Are you sure you want to proceed?",
-    confirmText = "Confirm",
-    cancelText = "Cancel"
-}) {
+                          isOpen,
+                          onClose,
+                          onConfirm,
+                          title = "Confirm action",
+                          message = "Are you sure you want to proceed?",
+                          confirmText = "Confirm",
+                          cancelText = "Cancel"
+                      }) {
     const handleKeyDown = useCallback((e) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);

@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/slices/authSlice";
+import {Link, useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../store/slices/authSlice";
 import './styles/Header.css';
 import logo from './assets/images/logo.png';
 
@@ -17,8 +17,8 @@ function Header() {
     return (
         <header className="header">
             <div className="logo"
-            onClick={() => navigate("/")}>
-                <img src={logo} alt="Logo" className="logo-img" />
+                 onClick={() => navigate("/")}>
+                <img src={logo} alt="Logo" className="logo-img"/>
                 <div className="logo-text">
                     <span>News</span>
                     <span>Management</span>

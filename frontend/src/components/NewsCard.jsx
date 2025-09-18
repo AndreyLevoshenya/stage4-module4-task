@@ -1,10 +1,10 @@
-import React, { useMemo, useCallback } from "react";
+import React, {useCallback, useMemo} from "react";
 import "./styles/NewsCard.css";
 import {useNavigate} from "react-router-dom";
 import NewsTags from "./NewsTags";
 import NewsActionsPanel from "./NewsActionsPanel";
 
-function NewsCard({ newsItem, isAdmin, onAfterEdit, onAfterDelete }) {
+function NewsCard({newsItem, isAdmin, onAfterEdit, onAfterDelete}) {
     const navigate = useNavigate();
 
     const truncateText = useCallback((text, maxLength) => {
@@ -21,13 +21,13 @@ function NewsCard({ newsItem, isAdmin, onAfterEdit, onAfterDelete }) {
         navigate(`/news/${newsItem.id}/author`);
     }, [navigate, newsItem.id]);
 
-    const truncatedContent = useMemo(() => 
-        truncateText(newsItem.content, 120), 
+    const truncatedContent = useMemo(() =>
+            truncateText(newsItem.content, 120),
         [newsItem.content, truncateText]
     );
 
-    const formattedDate = useMemo(() => 
-        new Date(newsItem.createDate).toLocaleDateString(), 
+    const formattedDate = useMemo(() =>
+            new Date(newsItem.createDate).toLocaleDateString(),
         [newsItem.createDate]
     );
 
