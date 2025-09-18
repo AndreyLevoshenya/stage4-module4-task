@@ -1,10 +1,12 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { decodeJwtPayload } from "../../utils/jwt";
+import { buildApiUrl } from "../../config/constants";
 
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
     async ({ username, password }, thunkAPI) => {
         try {
-            const response = await fetch("http://localhost:8080/api/v1/auth/authenticate", {
+            const response = await fetch(buildApiUrl("AUTH", "/authenticate"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
@@ -27,11 +29,23 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const loginWithOAuth2 = createAsyncThunk(
+    "auth/loginWithOAuth2",
+    async (token, thunkAPI) => {
+        try {
+            const payload = decodeJwtPayload(token);
+            return { token, payload };
+        } catch (e) {
+            return thunkAPI.rejectWithValue("Invalid OAuth2 token");
+        }
+    }
+);
+
 export const registerUser = createAsyncThunk(
     "auth/registerUser",
     async ({ firstname, lastname, username, password }, thunkAPI) => {
         try {
-            const response = await fetch("http://localhost:8080/api/v1/auth/register", {
+            const response = await fetch(buildApiUrl("AUTH", "/register"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstname, lastname, username, password }),
@@ -71,11 +85,14 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
             state.roles = [];
             localStorage.removeItem("token");
-        },
+        }
     },
     extraReducers: (builder) => {
         builder
-            // login
+            .addCase(loginWithOAuth2.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -83,7 +100,7 @@ const authSlice = createSlice({
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.token = action.payload.token;
-                const payload = JSON.parse(atob(action.payload.token.split(".")[1]));
+                const payload = decodeJwtPayload(action.payload.token);
                 state.roles = payload.authorities || [];
                 state.isAuthenticated = true;
                 localStorage.setItem("token", action.payload.token);
@@ -92,16 +109,10 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-
-            // register
-            .addCase(registerUser.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.token = action.payload.token;
-                const payload = JSON.parse(atob(action.payload.token.split(".")[1]));
+                const payload = decodeJwtPayload(action.payload.token);
                 state.roles = payload.authorities || [];
                 state.isAuthenticated = true;
                 localStorage.setItem("token", action.payload.token);
@@ -109,8 +120,20 @@ const authSlice = createSlice({
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+
+            .addCase(loginWithOAuth2.fulfilled, (state, action) => {
+                state.token = action.payload.token;
+                state.roles = action.payload.payload.authorities || [];
+                state.isAuthenticated = true;
+                state.loading = false;
+                localStorage.setItem("token", action.payload.token);
+            })
+            .addCase(loginWithOAuth2.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
-    },
+    }
 });
 
 export const { logout } = authSlice.actions;

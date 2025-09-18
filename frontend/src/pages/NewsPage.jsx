@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Form, Alert } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -7,6 +7,9 @@ import NewsCard from "../components/NewsCard";
 import "./styles/NewsPage.css";
 import PaginationComponent from "../components/PaginationComponent";
 import NotFoundPage from "./NotFoundPage";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { showError } from "../utils/notifications";
+import { CONFIG } from "../config/constants";
 
 import { fetchNews, addNews } from "../services/NewsService";
 
@@ -14,24 +17,37 @@ function NewsPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // --- State ---
     const [news, setNews] = useState([]);
     const [error, setError] = useState("");
     const [notFound, setNotFound] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [searchLoading, setSearchLoading] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
-    // --- State from URL ---
-    const [page, setPage] = useState(Number(searchParams.get("page") || 0));
-    const [size, setSize] = useState(Number(searchParams.get("size") || 10));
+    const [page, setPage] = useState(Number(searchParams.get("page") || CONFIG.UI.PAGINATION.DEFAULT_PAGE));
+    const [size, setSize] = useState(Number(searchParams.get("size") || CONFIG.UI.PAGINATION.DEFAULT_SIZE));
     const [sortField, setSortField] = useState(searchParams.get("sortField") || "createDate");
     const [sort, setSort] = useState(searchParams.get("sort") || "DESC");
     const [search, setSearch] = useState(searchParams.get("search") || "");
+    const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
 
     const [showAddModal, setShowAddModal] = useState(false);
 
-    // --- Effects ---
     const roles = useSelector((state) => state.auth.roles || []);
+    const isAdmin = useMemo(() => roles.includes("ADMIN"), [roles]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInput !== search) {
+                setSearchLoading(true);
+                setSearch(searchInput);
+                setPage(CONFIG.UI.PAGINATION.DEFAULT_PAGE);
+            }
+        }, CONFIG.UI.DEBOUNCE_DELAY);
+
+        return () => clearTimeout(timer);
+    }, [searchInput, search]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -48,43 +64,51 @@ function NewsPage() {
         setSearchParams(params);
     }, [page, size, sortField, sort, search, setSearchParams]);
 
-    // --- Fetch ---
-    const loadNews = async () => {
+    const loadNews = useCallback(async () => {
         setError("");
+        if (page === CONFIG.UI.PAGINATION.DEFAULT_PAGE && size === CONFIG.UI.PAGINATION.DEFAULT_SIZE && sortField === "createDate" && sort === "DESC" && !search) {
+            setLoading(true);
+        } else {
+            setSearchLoading(true);
+        }
+        
         try {
             const data = await fetchNews({ page, size, sortField, sort, search });
             setNews(data.content);
             setTotalElements(data.totalElements);
             setTotalPages(data.totalPages);
         } catch (err) {
-            if (err.status === 404) {
+            if (err.status === 404 || err.errorCode === "000001") {
                 setNotFound(true);
             } else {
                 setError(err.message);
             }
+        } finally {
+            setLoading(false);
+            setSearchLoading(false);
         }
-    };
+    }, [page, size, sortField, sort, search]);
 
-    // --- Handlers ---
-    const handleSearchInput = (e) => {
-        setSearch(e.target.value);
-        setPage(0);
-    };
+    const handleSearchInput = useCallback((e) => {
+        setSearchInput(e.target.value);
+    }, []);
 
-    const handleAddNews = () => setShowAddModal(true);
+    const handleAddNews = useCallback(() => setShowAddModal(true), []);
 
-    const handleNewsAdded = async (newsData) => {
+    const handleNewsAdded = useCallback(async (newsData) => {
         try {
             await addNews(newsData);
             setShowAddModal(false);
             loadNews();
         } catch (err) {
-            // Prefer backend error message
-            alert(err.message);
+            showError(err.message);
         }
-    };
+    }, [loadNews]);
 
-    // --- Render ---
+    if (loading) {
+        return <LoadingSpinner text="Loading news..." />;
+    }
+
     if (notFound) {
         return <NotFoundPage />;
     }
@@ -96,14 +120,21 @@ function NewsPage() {
 
                 <div className="news-controls">
                     <div className="top-row">
-                        <input
-                            className="news-search"
-                            type="text"
-                            placeholder="Search by text or tags (#tag)"
-                            value={search}
-                            onChange={handleSearchInput}
-                        />
-                        {roles.includes("ADMIN") && (
+                        <div className="search-container">
+                            <input
+                                className="news-search"
+                                type="text"
+                                placeholder="Search by text or tags (#tag)"
+                                value={searchInput}
+                                onChange={handleSearchInput}
+                            />
+                            {searchLoading && (
+                                <div className="search-spinner">
+                                    <div className="spinner"></div>
+                                </div>
+                            )}
+                        </div>
+                        {(
                             <button className="add-news-btn" onClick={handleAddNews}>
                                 Add News
                             </button>
@@ -118,7 +149,7 @@ function NewsPage() {
                                 const [field, direction] = e.target.value.split("_");
                                 setSortField(field);
                                 setSort(direction);
-                                setPage(0);
+                                setPage(CONFIG.UI.PAGINATION.DEFAULT_PAGE);
                             }}
                             className="sort-select"
                         >
@@ -137,7 +168,7 @@ function NewsPage() {
                         <NewsCard
                             key={n.id}
                             newsItem={n}
-                            isAdmin={roles.includes("ADMIN")}
+                            isAdmin={isAdmin}
                             onAfterEdit={loadNews}
                             onAfterDelete={loadNews}
                         />
@@ -151,7 +182,7 @@ function NewsPage() {
                     onPageChange={(p) => setPage(p)}
                     onSizeChange={(s) => {
                         setSize(s);
-                        setPage(0);
+                        setPage(CONFIG.UI.PAGINATION.DEFAULT_PAGE);
                     }}
                 />
             </div>

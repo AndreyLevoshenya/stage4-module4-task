@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import AsyncSelect from "react-select/async";
+import { Form, Button } from "react-bootstrap";
 import "./styles/AddNewsModal.css";
 import { api } from "../services/api";
+import { validateNewsTitle, validateNewsContent, validateTag } from "../utils/validation";
+import { buildApiUrl } from "../config/constants";
+import { showError } from "../utils/notifications";
 
 function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = false }) {
     const handleKeyDown = useCallback((e) => {
@@ -26,6 +30,8 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
     const [selectedTags, setSelectedTags] = useState(getInitialState().selectedTags);
     const [errors, setErrors] = useState({});
     const [submitError, setSubmitError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoadingTags, setIsLoadingTags] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -38,49 +44,35 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
         }
     }, [initialData, isOpen]);
 
-    const validateTitle = (value) => {
-        if (!value.trim()) return "Title is required.";
-        if (value.length < 6 || value.length > 30) return "Title must be between 6 and 30 characters.";
-        return "";
-    };
-
-    const validateContent = (value) => {
-        if (!value.trim()) return "Content is required.";
-        if (value.length < 12 || value.length > 1000) return "Content must be between 12 and 1000 characters.";
-        return "";
-    };
-
-    const validateTag = (tag) => {
-        if (tag.label.length < 3 || tag.label.length > 15) {
-            return `Tag "${tag.label}" must be between 3 and 15 characters.`;
-        }
-        return "";
-    };
-
     const loadTags = useCallback(async (inputValue) => {
+        setIsLoadingTags(true);
         try {
             const data = await api.get(
-                `http://localhost:8080/api/v1/tags?search=${inputValue || ""}&page=0&size=20&sort=name,asc`
+                `${buildApiUrl("TAGS")}?search=${inputValue || ""}&page=0&size=20&sort=name,asc`
             );
             return data.content.map(tag => ({ value: tag.id, label: tag.name }));
         } catch (err) {
-            console.error(err);
+            showError("Failed to load tags");
             return [];
+        } finally {
+            setIsLoadingTags(false);
         }
     }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         const newErrors = {};
-        const titleError = validateTitle(title);
-        const contentError = validateContent(content);
+        const titleError = validateNewsTitle(title);
+        const contentError = validateNewsContent(content);
 
         if (titleError) newErrors.title = titleError;
         if (contentError) newErrors.content = contentError;
 
         selectedTags.forEach((tag, index) => {
-            const tagError = validateTag(tag);
+            const label = tag?.label ?? ""; // безопасная проверка
+            const tagError = validateTag(label);
             if (tagError) newErrors[`tag-${index}`] = tagError;
         });
 
@@ -89,6 +81,7 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
             return;
         }
 
+        setIsSubmitting(true);
         try {
             await onSave({
                 title,
@@ -96,10 +89,10 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
                 tagIds: selectedTags.map(tag => tag.value),
             });
             onClose();
-            window.location.reload();
         } catch (err) {
-            console.error(err);
             setSubmitError(err.message || "Failed to save news. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -109,35 +102,43 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <h3>{isEdit ? "Edit News" : "Add News"}</h3>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        placeholder="Title"
-                        value={title}
-                        onChange={e => {
-                            const value = e.target.value;
-                            setTitle(value);
-                            setErrors(prev => ({ ...prev, title: validateTitle(value) }));
-                        }}
-                        required
-                        autoFocus
-                    />
-                    {errors.title && <p className="error-text">{errors.title}</p>}
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="title" className="form-group">
+                        <Form.Control
+                            type="text"
+                            placeholder="Title"
+                            value={title}
+                            onChange={e => {
+                                const value = e.target.value;
+                                setTitle(value);
+                                setErrors(prev => ({ ...prev, title: validateNewsTitle(value) }));
+                            }}
+                            isInvalid={!!errors.title}
+                            required
+                            autoFocus
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
+                    </Form.Group>
 
-                    <textarea
-                        placeholder="Content"
-                        value={content}
-                        onChange={e => {
-                            const value = e.target.value;
-                            setContent(value);
-                            setErrors(prev => ({ ...prev, content: validateContent(value) }));
-                        }}
-                        required
-                    />
-                    {errors.content && <p className="error-text">{errors.content}</p>}
+                    <Form.Group controlId="content" className="form-group">
+                        <Form.Control
+                            as="textarea"
+                            placeholder="Content"
+                            value={content}
+                            onChange={e => {
+                                const value = e.target.value;
+                                setContent(value);
+                                setErrors(prev => ({ ...prev, content: validateNewsContent(value) }));
+                            }}
+                            isInvalid={!!errors.content}
+                            required
+                            rows={4}
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.content}</Form.Control.Feedback>
+                    </Form.Group>
 
-                    <div className="tags-section">
-                        <label>Select tags:</label>
+                    <Form.Group controlId="tags" className="form-group">
+                        <Form.Label>Select tags:</Form.Label>
                         <AsyncSelect
                             isMulti
                             cacheOptions
@@ -145,35 +146,41 @@ function NewsFormModal({ isOpen, onClose, onSave, initialData = null, isEdit = f
                             loadOptions={loadTags}
                             value={selectedTags}
                             onChange={(newTags) => {
-                                setSelectedTags(newTags);
+                                const tagsArray = newTags || [];
+                                setSelectedTags(tagsArray);
+
                                 const newErrors = {};
-                                newTags.forEach((tag, index) => {
-                                    const tagError = validateTag(tag);
+                                tagsArray.forEach((tag, index) => {
+                                    const label = tag?.label ?? "";
+                                    const tagError = validateTag(label);
                                     if (tagError) newErrors[`tag-${index}`] = tagError;
                                 });
                                 setErrors(prev => ({ ...prev, ...newErrors }));
                             }}
-                            placeholder="Search and select tags..."
+                            placeholder={isLoadingTags ? "Loading tags..." : "Search and select tags..."}
+                            isLoading={isLoadingTags}
                         />
                         {selectedTags.map((tag, index) =>
                             errors[`tag-${index}`] ? (
                                 <p key={index} className="error-text">{errors[`tag-${index}`]}</p>
                             ) : null
                         )}
-                    </div>
+                    </Form.Group>
 
-                    {submitError && <p className="error-text">{submitError}</p>}
+                    {submitError && <div className="alert alert-danger">{submitError}</div>}
 
                     <div className="modal-actions">
-                        <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
-                        <button type="submit" className="btn btn-primary">{isEdit ? "Update" : "Save"}</button>
+                        <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="primary" disabled={isSubmitting}>
+                            {isSubmitting ? "Saving..." : (isEdit ? "Update" : "Save")}
+                        </Button>
                     </div>
-                </form>
+                </Form>
             </div>
         </div>
     );
 }
 
 export default NewsFormModal;
-
-

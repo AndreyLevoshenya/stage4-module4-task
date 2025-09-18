@@ -71,6 +71,27 @@
 
 .auth-container .btn-primary:hover { background-color: #0f2d57; transform: translateY(-2px); }
 
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border, #e5e7eb);
+}
+
+.auth-divider span {
+    padding: 0 16px;
+    color: var(--color-muted, #6b7280);
+    font-size: 14px;
+}
+
 .auth-error {
     background-color: #f8d7da;
     color: #721c24;

@@ -21,7 +21,7 @@ function HomePage() {
                 </div>
                 <div className="feature-card">
                     <h3>Simple editing</h3>
-                    <p>Create and update news in a single, convenient modal.</p>
+                    <p>Create and update news in a convenient modal.</p>
                 </div>
                 <div className="feature-card">
                     <h3>Secure access</h3>
@@ -33,5 +33,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-

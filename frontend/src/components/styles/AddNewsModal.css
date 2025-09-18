@@ -1,3 +1,30 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
 .modal-content h3 {
     margin: 0 0 10px 0;
     font-size: 20px;
@@ -6,51 +33,118 @@
     text-align: center;
 }
 
-.modal-content input,
-.modal-content textarea {
-    width: 100%;
-    padding: 10px 12px;
+/* Bootstrap form styles */
+.modal-content .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-content .form-control {
+    border-radius: 8px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
-.modal-content textarea {
-    min-height: 80px;
-    resize: vertical;
+.modal-content .form-control:focus {
+    border-color: #0b2239;
+    box-shadow: 0 0 5px rgba(11,34,57,0.3);
 }
 
-
-.modal-content input:focus,
-.modal-content textarea:focus {
-    border-color: #007bff;
+.modal-content .form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 5px rgba(220,53,69,0.3);
 }
 
-.modal-content textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.tags-section {
-    display: flex;
-    gap: 8px;
-    margin: 8px 0;
-}
-
-.tags-section input {
-    flex: 1;
-}
-
-/* Using global modal actions from styles/global.css */
-
-/* Use .btn, .btn-primary, .btn-danger, .btn-ghost from global.css instead */
-
-/* Button styles moved to global.css */
-
-.error-text {
-    color: red;
+.modal-content .form-control + .invalid-feedback {
+    display: block;
+    min-height: 1.25rem;
+    margin-top: 0.25rem;
     font-size: 0.875rem;
-    margin: 0.25rem 0 0;
+    color: #dc3545;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content .form-label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-actions .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.modal-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* AsyncSelect styles */
+.modal-content .react-select__control {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    min-height: 38px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.modal-content .react-select__control:hover {
+    border-color: #0b2239;
+}
+
+.modal-content .react-select__control--is-focused {
+    border-color: #0b2239;
+    box-shadow: 0 0 5px rgba(11,34,57,0.3);
+}
+
+.modal-content .react-select__control--is-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-content .react-select__placeholder {
+    color: #6c757d;
+}
+
+.modal-content .react-select__input-container {
+    color: #333;
+}
+
+.modal-content .react-select__value-container {
+    padding: 2px 8px;
+}
+
+.modal-content .react-select__multi-value {
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+.modal-content .react-select__multi-value__label {
+    color: #495057;
+    font-size: 0.875rem;
+}
+
+.modal-content .react-select__multi-value__remove {
+    color: #6c757d;
+}
+
+.modal-content .react-select__multi-value__remove:hover {
+    background-color: #dc3545;
+    color: white;
 }

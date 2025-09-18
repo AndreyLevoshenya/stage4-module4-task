@@ -49,7 +49,7 @@ function NewsActionsPanel({ newsItem, onAfterEdit, onAfterDelete }) {
                 <Button className="news-actions-button" onClick={openEdit} aria-label="Edit" title="Edit" >
                     <Pencil size={16} />
                 </Button>
-                <Button className="news-actions-button" onClick={openDelete} aria-label="Delete" title="Delete" >
+                <Button className="news-actions-button" variant="danger" onClick={openDelete} aria-label="Delete" title="Delete" >
                     <Trash size={16} />
                 </Button>
             </div>

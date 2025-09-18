@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../store/slices/authSlice";
-import "./styles/RegisterPage.css";
+import { validateFirstname, validateLastname, validateUsername, validatePassword } from "../utils/validation";
+import "./styles/AuthPage.css";
+import {googleOAuth2} from "../services/oauthService";
 
 function RegisterPage() {
     const [firstname, setFirstname] = useState("");
@@ -21,29 +23,6 @@ function RegisterPage() {
 
     const { loading, error } = useSelector((state) => state.auth);
 
-    const validateFirstname = (value) => {
-        if (!value.trim()) return "Firstname cannot be blank";
-        if (value.length < 3 || value.length > 32) return "Firstname must be 3 to 32 characters long";
-        return "";
-    };
-
-    const validateLastname = (value) => {
-        if (!value.trim()) return "Lastname cannot be blank";
-        if (value.length < 3 || value.length > 32) return "Lastname must be 3 to 32 characters long";
-        return "";
-    };
-
-    const validateUsername = (value) => {
-        if (!value.trim()) return "Username cannot be blank";
-        if (value.length < 3 || value.length > 30) return "Username must be 3 to 30 characters long";
-        return "";
-    };
-
-    const validatePassword = (value) => {
-        if (!value.trim()) return "Password cannot be blank";
-        if (value.length < 4 || value.length > 30) return "Password must be 4 to 30 characters long";
-        return "";
-    };
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -67,9 +46,13 @@ function RegisterPage() {
         }
     };
 
+    const handleGoogleLogin = () => {
+        googleOAuth2.redirectToBackend();
+    };
+
     return (
-        <div className="register-page">
-            <Container className="register-container">
+        <div className="auth-page">
+            <div className="auth-container">
                 <h2>Register</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
                 <Form onSubmit={handleRegister}>
@@ -133,8 +116,14 @@ function RegisterPage() {
                     <Button type="submit" className="btn-primary" disabled={loading}>
                         {loading ? "Registering..." : "Register"}
                     </Button>
+
+                    <div className="auth-divider"><span>or</span></div>
+
+                    <Button type="button" className="btn-google" onClick={handleGoogleLogin} disabled={loading}>
+                        Continue with Google
+                    </Button>
                 </Form>
-            </Container>
+            </div>
         </div>
     );
 }

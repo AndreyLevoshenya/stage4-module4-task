@@ -5,6 +5,7 @@ import "./styles/AuthorPage.css";
 import {useSelector} from "react-redux";
 import { api } from "../services/api";
 import NotFoundPage from "./NotFoundPage";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function AuthorPage() {
     const { id } = useParams();
@@ -32,7 +33,7 @@ function AuthorPage() {
                 setLoading(false);
             })
             .catch((err) => {
-                if (err.status === 404) {
+                if (err.status === 404 || err.errorCode === "000002") {
                     setNotFound(true);
                 } else {
                     setError(err.message);
@@ -41,7 +42,7 @@ function AuthorPage() {
             });
     }, [id]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <LoadingSpinner text="Loading author..." />;
     if (notFound) return <NotFoundPage />;
     if (error) return <p style={{ color: 'crimson' }}>Error: {error}</p>;
 

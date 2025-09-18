@@ -6,6 +6,9 @@ import NewsActionsPanel from "../components/NewsActionsPanel";
 import {useSelector} from "react-redux";
 import { api } from "../services/api";
 import NotFoundPage from "./NotFoundPage";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { validateComment } from "../utils/validation";
+import { handleError, isNotFoundError } from "../utils/errorHandler";
 
 function NewsDetailPage() {
     const {id} = useParams();
@@ -16,11 +19,13 @@ function NewsDetailPage() {
     const [newComment, setNewComment] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [notFound, setNotFound] = useState(false);
+    const [commentError, setCommentError] = useState("");
 
     const navigate = useNavigate();
     const location = useLocation();
 
     const roles = useSelector((state) => state.auth.roles || []);
+
 
     useEffect(() => {
         api.get(`http://localhost:8080/api/v1/news/${id}`)
@@ -29,13 +34,16 @@ function NewsDetailPage() {
                 setLoading(false);
             })
             .catch((err) => {
-                if (err.status === 404) {
-                    setNotFound(true);
-                    setLoading(false);
-                    return;
-                }
-                setError(err.message);
-                setLoading(false);
+                handleError(err, {
+                    onNotFound: () => {
+                        setNotFound(true);
+                        setLoading(false);
+                    },
+                    onGenericError: () => {
+                        setError(err.message);
+                        setLoading(false);
+                    }
+                });
             });
     }, [id, navigate, location.pathname]);
 
@@ -52,7 +60,13 @@ function NewsDetailPage() {
     }, [id]);
 
     const handleAddComment = async () => {
-        if (!newComment.trim()) return;
+        const commentValidation = validateComment(newComment);
+        if (commentValidation) {
+            setCommentError(commentValidation);
+            return;
+        }
+        
+        setCommentError("");
         setSubmitting(true);
         try {
             const addedComment = await api.post(`http://localhost:8080/api/v1/comments`, { content: newComment, newsId: news.id });
@@ -65,7 +79,7 @@ function NewsDetailPage() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <LoadingSpinner text="Loading news..." />;
     if (notFound) return <NotFoundPage />;
     if (error) return <p style={{ color: 'crimson' }}>{error}</p>;
     if (!news) return <NotFoundPage />;
@@ -93,10 +107,20 @@ function NewsDetailPage() {
                 <NewsTags tags={news.tagDtoResponseList}/>
                 <h3>Comments</h3>
                 <div className="add-comment">
-                    <textarea placeholder="Write a comment..." value={newComment}
-                              onChange={(e) => setNewComment(e.target.value)}/>
+                    <textarea 
+                        placeholder="Write a comment..." 
+                        value={newComment}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setNewComment(value);
+                            setCommentError(validateComment(value));
+                        }}
+                    />
+                    {commentError && <p className="error-text">{commentError}</p>}
                     <button onClick={handleAddComment}
-                            disabled={submitting}> {submitting ? "Sending..." : "Send"} </button>
+                            disabled={submitting || !!commentError}> 
+                        {submitting ? "Sending..." : "Send"} 
+                    </button>
                 </div>
                 {comments.length === 0 ? (<p>No comments yet</p>) : (comments.map((comment) => (
                     <div key={comment.id} className="comment">

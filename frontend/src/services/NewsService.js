@@ -1,6 +1,7 @@
 import { api } from "./api";
+import { buildApiUrl } from "../config/constants";
 
-const API_URL = "http://localhost:8080/api/v1/news";
+const API_URL = buildApiUrl("NEWS");
 
 export const fetchNews = async ({ page, size, sortField, sort, search }) => {
     const params = new URLSearchParams({

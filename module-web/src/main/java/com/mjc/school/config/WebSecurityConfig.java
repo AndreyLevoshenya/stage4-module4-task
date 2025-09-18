@@ -60,6 +60,12 @@ public class WebSecurityConfig {
                                 "/webjars/**",
                                 "/swagger-ui.html",
                                 "/h2-console").permitAll()
+                        .requestMatchers(
+                                "/", "/index.html", "/static/**",
+                                "/favicon.ico", "/manifest.json",
+                                "/logo*.png"
+                        ).permitAll()
+                        .requestMatchers("/{path:[^\\.]*}", "/**/{path:[^\\.]*}").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/news", "/api/v1/comments").hasAnyAuthority(USER, ADMIN)

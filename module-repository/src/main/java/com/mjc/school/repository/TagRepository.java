@@ -18,17 +18,17 @@ public interface TagRepository extends JpaRepository<Tag, Long>, JpaSpecificatio
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = "news")
+    @EntityGraph()
     List<Tag> findAll();
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = "news")
+    @EntityGraph()
     Page<Tag> findAll(@NonNull Pageable pageable);
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = "news")
+    @EntityGraph()
     Page<Tag> findAll(Specification<Tag> spec, @NonNull Pageable pageable);
 
     @Override

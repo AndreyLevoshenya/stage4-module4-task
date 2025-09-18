@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import "./styles/ConfirmModal.css";
+import {Button} from "react-bootstrap";
 
 function ConfirmModal({
     isOpen,
@@ -8,8 +9,7 @@ function ConfirmModal({
     title = "Confirm action",
     message = "Are you sure you want to proceed?",
     confirmText = "Confirm",
-    cancelText = "Cancel",
-    confirmVariant = "danger" // "danger" | "primary"
+    cancelText = "Cancel"
 }) {
     const handleKeyDown = useCallback((e) => {
         if (e.key === "Escape") onClose();
@@ -30,17 +30,13 @@ function ConfirmModal({
                 <h3>{title}</h3>
                 <p>{message}</p>
 
-                <div className="modal-actions">
-                    <button type="button" onClick={onClose} className="btn btn-ghost">
+                <div className="confirm-actions-panel">
+                    <Button type="button" variant="secondary" onClick={onClose}>
                         {cancelText}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onConfirm}
-                        className={`btn ${confirmVariant === "danger" ? "btn-danger" : "btn-primary"}`}
-                    >
+                    </Button>
+                    <Button type="button" variant="danger" onClick={onConfirm}>
                         {confirmText}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -48,5 +44,3 @@ function ConfirmModal({
 }
 
 export default ConfirmModal;
-
-
