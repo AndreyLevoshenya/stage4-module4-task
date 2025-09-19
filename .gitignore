@@ -22,3 +22,4 @@ secrets.json
 *.jks
 *.p12
 *.pem
+/static

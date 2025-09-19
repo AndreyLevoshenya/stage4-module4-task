@@ -29,7 +29,7 @@ function NewsDetailPage() {
 
 
     useEffect(() => {
-        api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}${id}`)
+        api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}/${id}`)
             .then((data) => {
                 setNews(data);
                 setLoading(false);
@@ -51,7 +51,7 @@ function NewsDetailPage() {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}${id}/comments`);
+                const data = await api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}/${id}/comments`);
                 setComments(data.content);
             } catch (err) {
                 setError(err.message);
