@@ -9,6 +9,7 @@ import NotFoundPage from "./NotFoundPage";
 import LoadingSpinner from "../components/LoadingSpinner";
 import {validateComment} from "../utils/validation";
 import {handleError} from "../utils/errorHandler";
+import {CONFIG} from "../config/constants"
 
 function NewsDetailPage() {
     const {id} = useParams();
@@ -28,7 +29,7 @@ function NewsDetailPage() {
 
 
     useEffect(() => {
-        api.get(`http://localhost:8080/api/v1/news/${id}`)
+        api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}${id}`)
             .then((data) => {
                 setNews(data);
                 setLoading(false);
@@ -50,7 +51,7 @@ function NewsDetailPage() {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await api.get(`http://localhost:8080/api/v1/news/${id}/comments`);
+                const data = await api.get(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.NEWS}${id}/comments`);
                 setComments(data.content);
             } catch (err) {
                 setError(err.message);
@@ -69,7 +70,7 @@ function NewsDetailPage() {
         setCommentError("");
         setSubmitting(true);
         try {
-            const addedComment = await api.post(`http://localhost:8080/api/v1/comments`, {
+            const addedComment = await api.post(`${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.COMMENTS}`, {
                 content: newComment,
                 newsId: news.id
             });

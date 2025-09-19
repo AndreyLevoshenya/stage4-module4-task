@@ -71,7 +71,7 @@ function NewsFormModal({isOpen, onClose, onSave, initialData = null, isEdit = fa
         if (contentError) newErrors.content = contentError;
 
         selectedTags.forEach((tag, index) => {
-            const label = tag?.label ?? ""; // безопасная проверка
+            const label = tag?.label ?? "";
             const tagError = validateTag(label);
             if (tagError) newErrors[`tag-${index}`] = tagError;
         });
