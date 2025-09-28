@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.mjc.school.exception.ExceptionErrorCodes.*;
+import static com.mjc.school.exception.ExceptionErrorCodes.AUTHOR_DOES_NOT_EXIST;
+import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
+import static com.mjc.school.exception.ExceptionErrorCodes.USER_DOES_NOT_EXIST;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)

@@ -2,7 +2,10 @@ package com.mjc.school.filter;
 
 import com.mjc.school.model.News;
 import com.mjc.school.model.Tag;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

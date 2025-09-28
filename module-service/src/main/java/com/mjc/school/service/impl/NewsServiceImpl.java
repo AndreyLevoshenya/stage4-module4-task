@@ -33,7 +33,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.mjc.school.exception.ExceptionErrorCodes.*;
+import static com.mjc.school.exception.ExceptionErrorCodes.AUTHOR_DOES_NOT_EXIST;
+import static com.mjc.school.exception.ExceptionErrorCodes.NEWS_DOES_NOT_EXIST;
+import static com.mjc.school.exception.ExceptionErrorCodes.TAG_DOES_NOT_EXIST;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)

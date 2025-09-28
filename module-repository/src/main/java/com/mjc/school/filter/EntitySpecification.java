@@ -2,6 +2,7 @@ package com.mjc.school.filter;
 
 import com.mjc.school.model.BaseEntity;
 import org.springframework.data.jpa.domain.Specification;
+
 import java.util.List;
 
 public class EntitySpecification<T extends BaseEntity<Long>> {

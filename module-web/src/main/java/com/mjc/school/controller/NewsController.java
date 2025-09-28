@@ -1,7 +1,13 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.auth.UserDetailsServiceImpl;
-import com.mjc.school.dto.*;
+import com.mjc.school.dto.AuthorDtoResponseWithNews;
+import com.mjc.school.dto.CommentDtoResponse;
+import com.mjc.school.dto.NewsDtoRequest;
+import com.mjc.school.dto.NewsDtoResponse;
+import com.mjc.school.dto.ParametersDtoRequest;
+import com.mjc.school.dto.SearchingRequest;
+import com.mjc.school.dto.TagDtoResponse;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.CommentService;
 import com.mjc.school.service.NewsService;
@@ -18,6 +24,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import static com.mjc.school.controller.RestConstants.NEWS_V1_API_PATH;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
