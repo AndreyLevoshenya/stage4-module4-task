@@ -1,5 +1,12 @@
-INSERT INTO authors(id, name, create_date, last_update_date)
-values (1, 'Author1', now(), now());
+INSERT INTO security_users(id, firstname, lastname, password, role, username)
+values (1, 'test', 'test', '$2a$12$.X68yudtJQGDWOrK5XamoeSNgmRpcxdFsrt66WinJYnAcekuFlN9W', 'USER', 'test');
+INSERT INTO security_users(id, firstname, lastname, password, role, username)
+values (2, 'admin', 'admin', '$2a$12$VSXMyJ5bjoNmZJCC0hDgDeIdVwdk8ZRXRXL9s67XzZZKquVLKfg4m', 'ADMIN', 'admin');
+ALTER TABLE security_users
+    ALTER COLUMN id RESTART WITH 3;
+
+INSERT INTO authors(id, name, create_date, last_update_date, user_id)
+values (1, 'Author1', now(), now(), 1);
 INSERT INTO authors(id, name, create_date, last_update_date)
 values (2, 'Author2', now(), now());
 INSERT INTO authors(id, name, create_date, last_update_date)
@@ -12,13 +19,6 @@ INSERT INTO authors(id, name, create_date, last_update_date)
 values (6, 'Author6', now(), now());
 ALTER TABLE authors
     ALTER COLUMN id RESTART WITH 7;
-
-INSERT INTO security_users(id, firstname, lastname, password, role, username)
-values (1, 'test', 'test', '$2a$12$.X68yudtJQGDWOrK5XamoeSNgmRpcxdFsrt66WinJYnAcekuFlN9W', 'USER', 'test');
-INSERT INTO security_users(id, firstname, lastname, password, role, username)
-values (2, 'admin', 'admin', '$2a$12$VSXMyJ5bjoNmZJCC0hDgDeIdVwdk8ZRXRXL9s67XzZZKquVLKfg4m', 'ADMIN', 'admin');
-ALTER TABLE security_users
-    ALTER COLUMN id RESTART WITH 3;
 
 INSERT INTO news(id, content, create_date, last_update_date, title, author_id)
 values (1, 'content1', now(), now(), 'title1', 1);

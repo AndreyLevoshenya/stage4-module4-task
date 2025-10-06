@@ -69,7 +69,7 @@ class AuthorServiceImplTest {
         assertEquals("Name", result.getContent().get(0).getName());
 
         verify(authorRepository).findAll(pageable);
-        verify(authorDtoMapper).modelToDto(authors.get(0));
+        verify(authorDtoMapper).modelToDtoWithNews(authors.get(0));
     }
 
     @Test
@@ -103,7 +103,7 @@ class AuthorServiceImplTest {
         assertEquals("Name", result.getContent().get(0).getName());
 
         verify(authorRepository).findAll(any(Specification.class), eq(pageable));
-        verify(authorDtoMapper).modelToDto(authors.get(0));
+        verify(authorDtoMapper).modelToDtoWithNews(authors.get(0));
     }
 
     @Test
@@ -132,7 +132,7 @@ class AuthorServiceImplTest {
         assertEquals(dtoResponse, result);
 
         verify(authorRepository).findById(id);
-        verify(authorDtoMapper).modelToDto(author);
+        verify(authorDtoMapper).modelToDtoWithNews(author);
     }
 
     @Test
@@ -172,7 +172,7 @@ class AuthorServiceImplTest {
 
         verify(authorDtoMapper).dtoToModel(request);
         verify(authorRepository).save(model);
-        verify(authorDtoMapper).modelToDto(saved);
+        verify(authorDtoMapper).modelToDtoWithNews(saved);
     }
 
     @Test
@@ -198,7 +198,7 @@ class AuthorServiceImplTest {
 
         verify(authorRepository).findById(1L);
         verify(authorRepository).save(model);
-        verify(authorDtoMapper).modelToDto(saved);
+        verify(authorDtoMapper).modelToDtoWithNews(saved);
     }
 
     @Test
@@ -247,7 +247,7 @@ class AuthorServiceImplTest {
         assertEquals(newName, existingAuthor.getName());
         verify(authorRepository).findById(id);
         verify(authorRepository).save(existingAuthor);
-        verify(authorDtoMapper).modelToDto(updatedAuthor);
+        verify(authorDtoMapper).modelToDtoWithNews(updatedAuthor);
     }
 
 
@@ -277,7 +277,7 @@ class AuthorServiceImplTest {
         assertEquals(originalName, existingAuthor.getName());
         verify(authorRepository).findById(id);
         verify(authorRepository).save(existingAuthor);
-        verify(authorDtoMapper).modelToDto(existingAuthor);
+        verify(authorDtoMapper).modelToDtoWithNews(existingAuthor);
     }
 
     @Test
@@ -339,7 +339,7 @@ class AuthorServiceImplTest {
 
         assertEquals(expectedDto, actualDto);
         verify(authorRepository).readByNewsId(newsId);
-        verify(authorDtoMapper).modelToDto(author);
+        verify(authorDtoMapper).modelToDtoWithNews(author);
     }
 
     @Test

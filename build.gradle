@@ -57,13 +57,6 @@ jacoco {
     toolVersion = "${jacocoVersion}"
 }
 
-sonar {
-    properties {
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.token", System.getenv("SONAR_TOKEN")
-    }
-}
-
 springBoot {
     mainClass = 'com.mjc.school.Main'
 }

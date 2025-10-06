@@ -24,9 +24,8 @@ function App() {
                 <Route element={<PublicLayout/>}>
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/register" element={<RegisterPage/>}/>
+                    <Route path="/oauth2/callback" element={<OAuthCallbackPage/>}/>
                 </Route>
-
-                <Route path="/oauth2/callback" element={<OAuthCallbackPage/>}/>
 
                 <Route
                     path="/"

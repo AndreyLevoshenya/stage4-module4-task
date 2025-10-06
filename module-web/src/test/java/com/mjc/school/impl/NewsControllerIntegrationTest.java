@@ -67,8 +67,7 @@ class NewsControllerIntegrationTest {
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .queryParam("searchBy", "content")
-                .queryParam("searchValue", "content2")
+                .queryParam("search", "content2")
                 .when()
                 .get("/api/v1/news")
                 .then()
@@ -546,7 +545,7 @@ class NewsControllerIntegrationTest {
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/v1/news/{id}/authors", newsId)
+                .get("/api/v1/news/{id}/author", newsId)
                 .then()
                 .statusCode(200)
                 .body("id", notNullValue())
@@ -561,7 +560,7 @@ class NewsControllerIntegrationTest {
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/v1/news/{id}/authors", nonExistentId)
+                .get("/api/v1/news/{id}/author", nonExistentId)
                 .then()
                 .statusCode(404);
     }
