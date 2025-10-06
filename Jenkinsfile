@@ -16,7 +16,7 @@ pipeline {
             steps {
 
                 sh '''
-                    echo 'Building app'
+                    echo 'Gradle build'
                      ./gradlew clean build
                     cd frontend
                     npm run build
