@@ -14,7 +14,9 @@ pipeline {
 
         stage('Build') {
             steps {
+
                 sh '''
+                    echo 'Building app'
                      ./gradlew clean build
                     cd frontend
                     npm run build
@@ -37,6 +39,7 @@ pipeline {
 
         stage('Test') {
             steps {
+                echo 'Gradle test'
                 sh './gradlew test'
             }
         }
