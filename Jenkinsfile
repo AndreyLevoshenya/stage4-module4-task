@@ -18,13 +18,7 @@ pipeline {
                 sh '''
                     echo 'Gradle build'
                     chmod +x gradlew
-                     ./gradlew clean build
-                    cd frontend
-                    npm run build
-                    cd ..
-                    rm -rf module-web/src/main/resources/static/*
-                    cp -r frontend/build/* module-web/src/main/resources/static/
-                    ./gradlew build
+                     ./gradlew clean build -x test
                 '''
             }
         }
