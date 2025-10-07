@@ -26,7 +26,6 @@ pipeline {
                     sh './gradlew sonar'
                 }
             }
-            }
         }
 
         stage('Test') {
