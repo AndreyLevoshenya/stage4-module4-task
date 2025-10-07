@@ -17,6 +17,7 @@ pipeline {
 
                 sh '''
                     echo 'Gradle build'
+                    chmod +x gradlew
                      ./gradlew clean build
                     cd frontend
                     npm run build
